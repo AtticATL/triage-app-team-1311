@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "triage-app",
+    "owner":"attic-atl",
     "slug": "triage-app",
     "version": "1.0.0",
     "orientation": "portrait",
