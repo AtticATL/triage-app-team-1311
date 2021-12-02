@@ -11,7 +11,7 @@ export interface Profile {
   birthYear: number;
 
   // Patient's medical history (paragraph text)
-  medicalHistory: string;
+  pastHistory: string;
 
   // The history of the current infection (paragraph text)
   currentInfectionHistory: string;

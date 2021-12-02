@@ -36,7 +36,7 @@ export default function ModalScreen({
   const firstName = useField("");
   const lastName = useField("");
   const age = useField<number | null>(null);
-  const medicalHistory = useField("");
+  const pastMedicalHistory = useField("");
   const infectionHistory = useField("");
 
   return (
@@ -55,19 +55,7 @@ export default function ModalScreen({
 
         <Group label="Age">
           <Row>
-            <NumberInput field={age} nextField={medicalHistory} />
-          </Row>
-        </Group>
-
-        <Group
-          label="Medical History"
-          caption="This patient's medical history, including prior conditions"
-        >
-          <Row>
-            <ParagraphInput
-              field={medicalHistory}
-              nextField={infectionHistory}
-            />
+            <NumberInput field={age} nextField={pastMedicalHistory} />
           </Row>
         </Group>
 
@@ -77,6 +65,18 @@ export default function ModalScreen({
         >
           <Row>
             <ParagraphInput field={infectionHistory} />
+          </Row>
+        </Group>
+
+        <Group
+          label="Past Medical History"
+          caption="This patient's past medical history, including prior conditions"
+        >
+          <Row>
+            <ParagraphInput
+              field={pastMedicalHistory}
+              nextField={infectionHistory}
+            />
           </Row>
         </Group>
       </Container>
