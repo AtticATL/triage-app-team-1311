@@ -1,0 +1,51 @@
+name: Build
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install nodejs 16.13.2
+        uses: actions/setup-node@v2.5.1
+        with:
+          node-version: 16.13.2
+          cache: yarn
+      - name: Install yarn dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Typecheck
+        run: yarn run --silent tsc
+
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install nodejs 16.13.2
+        uses: actions/setup-node@v2.5.1
+        with:
+          node-version: 16.13.2
+          cache: yarn
+      - name: Install yarn dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run Tests
+        run: yarn run --silent jest --verbose --ci --color
+
+  prettier:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install nodejs 16.13.2
+        uses: actions/setup-node@v2.5.1
+        with:
+          node-version: 16.13.2
+          cache: yarn
+      - name: Install yarn dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run prettier
+        run: yarn run --silent prettier --check --ignore-path .gitignore .

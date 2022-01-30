@@ -1,5 +1,5 @@
 import { z } from "zod"; // data validation library
-import { Question, QUESTION_KEYS } from "./triageQuestions.ts";
+import { Question, QUESTION_KEYS } from "./triageQuestions";
 
 const currentYear = new Date().getFullYear();
 
