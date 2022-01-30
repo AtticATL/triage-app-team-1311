@@ -8,7 +8,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { HomeScreenProps } from "../types";
+import { NavSubProps as RootNavSubProps } from "../App";
 import * as colors from "../constants/Colors";
 import TileButton from "../components/TileButton";
 import Container from "../components/Container";
@@ -16,7 +16,7 @@ import Container from "../components/Container";
 import { Text, View } from "../components/Themed";
 import { Heading } from "../components/Typography";
 
-export default function HomeScreen({ navigation }: HomeScreenProps) {
+export default function HomeScreen({ navigation }: RootNavSubProps<"Home">) {
   return (
     <ScrollView>
       <Container safe margin>

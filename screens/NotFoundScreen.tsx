@@ -2,11 +2,11 @@ import * as React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { Text, View } from "../components/Themed";
 
-import { RootStackScreenProps } from "../types";
+import { NavSubProps as RootNavSubProps } from "../App";
 
 export default function NotFoundScreen({
   navigation,
-}: RootStackScreenProps<"NotFound">) {
+}: RootNavSubProps<"NotFound">) {
   return (
     <View style={styles.container}>
       <Text style={styles.fourzerofour}>404</Text>

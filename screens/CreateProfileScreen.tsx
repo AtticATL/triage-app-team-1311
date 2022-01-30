@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { RootStackScreenProps } from "../types";
+import { NavSubProps as RootNavSubProps } from "../App";
 import { confirm } from "../lib/alert";
 
 import { useExitConfirmation } from "../hooks/useExitConfirmation";
@@ -29,7 +29,7 @@ import {
 
 export default function ModalScreen({
   navigation,
-}: RootStackScreenProps<"CreateProfile">) {
+}: RootNavSubProps<"CreateProfile">) {
   // Confirm exit
   useExitConfirmation(true);
 
