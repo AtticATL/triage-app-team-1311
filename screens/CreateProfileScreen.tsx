@@ -17,6 +17,11 @@ import { NavSubProps as RootNavSubProps } from "../App";
 import { useExitConfirmation } from "../hooks/useExitConfirmation";
 
 import * as Profile from "../lib/profile";
+import {
+  QUESTIONS,
+  CHECKLIST,
+  EMPTY_ANSWER_RECORD,
+} from "../lib/triageQuestions";
 import { confirm } from "../lib/alert";
 import {
   useField,
@@ -24,6 +29,8 @@ import {
   EnumField,
   NumberField,
   ParagraphField,
+  Entry,
+  Checkbox,
 } from "../components/Form";
 
 export default function CreateProfileScreen({
@@ -40,6 +47,10 @@ export default function CreateProfileScreen({
   let pastHistory = useField(Profile.Paragraph);
   let otherNotes = useField(Profile.Paragraph.optional());
 
+  // Track the true/false answers to triage questions
+  let [answers, setAnswers] =
+    useState<Record<string, boolean>>(EMPTY_ANSWER_RECORD);
+
   let partialProfileValidator = Profile.Profile.deepPartial();
   let draftProfile: z.infer<typeof partialProfileValidator> = {
     identity: {
@@ -47,12 +58,12 @@ export default function CreateProfileScreen({
       birthYear: birthYear.value,
       sex: sex.value,
     },
+    triageChecklist: answers,
     patientHistory: {
       currentInfectionHistory: currentInfectionHistory.value,
       pastHistory: pastHistory.value,
       otherNotes: otherNotes.value,
     },
-    triageChecklist: {},
     attachments: [],
   };
 
@@ -112,12 +123,31 @@ export default function CreateProfileScreen({
             help="Any other important information"
           />
         </VStack>
+        <VStack space={4}>
+          <Heading>Triage Checklist</Heading>
+          <Text>
+            Answers to these questions can help determine the severity of this
+            patient's case.
+          </Text>
+
+          <Entry space={4}>
+            {CHECKLIST.map((id) => (
+              <Checkbox
+                key={id}
+                value={answers[id]}
+                label={QUESTIONS[id].text}
+                onChange={(v) => setAnswers((a) => ({ ...a, [id]: v }))}
+              />
+            ))}
+          </Entry>
+        </VStack>
 
         <VStack space={4}>
           <Heading>Imaging and Attachments</Heading>
           <Text>Upload anything</Text>
         </VStack>
         <Text>{JSON.stringify(draftProfile, null, 4)}</Text>
+        <Text>{JSON.stringify(draftValidation, null, 4)}</Text>
       </VStack>
     </KeyboardAwareScrollView>
   );

@@ -1,5 +1,5 @@
 import { z } from "zod"; // data validation library
-import { Question, QUESTION_KEYS } from "./triageQuestions";
+import { Question, QUESTIONS } from "./triageQuestions";
 
 const currentYear = new Date().getFullYear();
 
@@ -78,7 +78,7 @@ export type PatientHistory = z.infer<typeof PatientHistory>;
  */
 export const TriageChecklist = z
   .record(z.boolean())
-  .refine((r) => Object.keys(r).every((k) => QUESTION_KEYS.includes(k)), {
+  .refine((r) => Object.keys(r).every((k) => QUESTIONS.hasOwnProperty(k)), {
     message: "Triage checklist contains question IDs we aren't aware of",
   });
 export type TriageChecklist = z.infer<typeof TriageChecklist>;

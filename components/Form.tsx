@@ -12,6 +12,7 @@ import {
   Button,
   TextArea,
   useToken,
+  Checkbox as NbCheckbox,
 } from "native-base";
 import { Feather } from "@expo/vector-icons";
 
@@ -235,14 +236,41 @@ export function ParagraphField<Z extends ZodType<string | undefined>>({
   );
 }
 
+export interface CheckboxProps {
+  label: string;
+  help?: string;
+  value: boolean;
+  onChange: (checked: boolean) => void;
+}
+
+export function Checkbox({ label, help, value, onChange }: CheckboxProps) {
+  return (
+    <Entry px={2}>
+      <NbCheckbox
+        size="md"
+        value={value.toString()}
+        onChange={onChange}
+        colorScheme="muted"
+      >
+        <Text pl={4}>{label}</Text>
+        {help && <HelpText>{help}</HelpText>}
+      </NbCheckbox>
+    </Entry>
+  );
+}
+
 /** Group surrounding an input, its label, helper text, and any validation errors. */
-function Entry({ children }: { children: React.ReactNode }) {
+export function Entry({
+  children,
+  ...rest
+}: { children: React.ReactNode } & React.ComponentProps<typeof VStack>) {
   return (
     <VStack
       bg={useColorModeValue("white", "muted.800")}
       rounded="md"
       px={1}
       py={2}
+      {...rest}
     >
       {children}
     </VStack>
