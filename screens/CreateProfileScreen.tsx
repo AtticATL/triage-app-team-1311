@@ -39,20 +39,20 @@ export default function CreateProfileScreen({
   // Confirm exit
   useExitConfirmation(true);
 
-  let name = useField(Profile.Name);
-  let birthYear = useField(Profile.BirthYear);
-  let sex = useField(Profile.Sex);
+  const name = useField(Profile.Name);
+  const birthYear = useField(Profile.BirthYear);
+  const sex = useField(Profile.Sex);
 
-  let currentInfectionHistory = useField(Profile.Paragraph);
-  let pastHistory = useField(Profile.Paragraph);
-  let otherNotes = useField(Profile.Paragraph.optional());
+  const currentInfectionHistory = useField(Profile.Paragraph);
+  const pastHistory = useField(Profile.Paragraph);
+  const otherNotes = useField(Profile.Paragraph.optional());
 
   // Track the true/false answers to triage questions
   let [answers, setAnswers] =
     useState<Record<string, boolean>>(EMPTY_ANSWER_RECORD);
 
-  let partialProfileValidator = Profile.Profile.deepPartial();
-  let draftProfile: z.infer<typeof partialProfileValidator> = {
+  const partialProfileValidator = Profile.Profile.deepPartial();
+  const draftProfile: z.infer<typeof partialProfileValidator> = {
     identity: {
       name: name.value,
       birthYear: birthYear.value,
@@ -67,7 +67,7 @@ export default function CreateProfileScreen({
     attachments: [],
   };
 
-  let draftValidation = Profile.Profile.safeParse(draftProfile);
+  const draftValidation = Profile.Profile.safeParse(draftProfile);
 
   return (
     <KeyboardAwareScrollView>

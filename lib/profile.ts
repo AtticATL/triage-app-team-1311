@@ -69,7 +69,7 @@ export type Paragraph = z.infer<typeof Paragraph>;
 export const PatientHistory = z.object({
   currentInfectionHistory: Paragraph,
   pastHistory: Paragraph,
-  otherNotes: Paragraph,
+  otherNotes: Paragraph.optional(),
 });
 export type PatientHistory = z.infer<typeof PatientHistory>;
 
