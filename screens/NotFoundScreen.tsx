@@ -1,6 +1,6 @@
 import * as React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { Text, View } from "../components/Themed";
+import { Text, Box } from "native-base";
 
 import { NavSubProps as RootNavSubProps } from "../App";
 
@@ -8,7 +8,7 @@ export default function NotFoundScreen({
   navigation,
 }: RootNavSubProps<"NotFound">) {
   return (
-    <View style={styles.container}>
+    <Box my="lg">
       <Text style={styles.fourzerofour}>404</Text>
       <Text style={styles.title}>This screen doesn't exist.</Text>
       <Text>
@@ -21,7 +21,7 @@ export default function NotFoundScreen({
       >
         <Text style={styles.linkText}>Go Home</Text>
       </TouchableOpacity>
-    </View>
+    </Box>
   );
 }
 

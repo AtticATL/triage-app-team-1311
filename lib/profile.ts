@@ -53,12 +53,23 @@ export const Identity = z.object({
 export type Identity = z.infer<typeof Identity>;
 
 /**
+ * A short paragraph of text, limited to 280 characters.
+ */
+export const Paragraph = z
+  .string()
+  .max(280, {
+    message: "Try to be more concise here (text cannot exceed 280 characters)",
+  })
+  .min(10, { message: "Text is too short; use more detail" });
+export type Paragraph = z.infer<typeof Paragraph>;
+
+/**
  * Information on the patient's medical history
  */
 export const PatientHistory = z.object({
-  pastHistory: z.string(),
-  currentInfectionHistory: z.string(),
-  otherNotes: z.string(),
+  currentInfectionHistory: Paragraph,
+  pastHistory: Paragraph,
+  otherNotes: Paragraph,
 });
 export type PatientHistory = z.infer<typeof PatientHistory>;
 

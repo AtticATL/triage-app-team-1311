@@ -1,16 +1,13 @@
-import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { NativeBaseProvider } from "native-base";
-
+import { StatusBar } from "expo-status-bar";
+import { NativeBaseProvider, useColorMode } from "native-base";
 import useCachedResources from "./hooks/useCachedResources";
-import useColorScheme from "./hooks/useColorScheme";
-
 import HomeScreen from "./screens/HomeScreen";
 import NotFoundScreen from "./screens/NotFoundScreen";
 import CreateProfileScreen from "./screens/CreateProfileScreen";
-
 import { LinkingOptions } from "@react-navigation/native";
 import * as Linking from "expo-linking";
+import { useColorScheme as useSystemColorScheme } from "react-native";
 import {
   NavigationContainer,
   DefaultTheme,
@@ -20,44 +17,57 @@ import {
   createStackNavigator,
   StackScreenProps,
 } from "@react-navigation/stack";
+import { nativeBaseTheme } from "./lib/nativeBaseTheme";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
-  const colorScheme = useColorScheme();
 
-  if (!isLoadingComplete) {
-    return null;
-  } else {
-    return (
-      <NativeBaseProvider>
-        <NavigationContainer
-          linking={linking}
-          theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
-          <Nav.Navigator>
-            <Nav.Screen
-              name="Home"
-              component={HomeScreen}
-              options={{ headerShown: false }}
-            />
-            <Nav.Screen
-              name="NotFound"
-              component={NotFoundScreen}
-              options={{ title: "Not Found" }}
-            />
-            <Nav.Screen
-              name="CreateProfile"
-              options={{
-                title: "Create Profile",
-              }}
-              component={CreateProfileScreen}
-            />
-          </Nav.Navigator>
-          <StatusBar />
-        </NavigationContainer>
-      </NativeBaseProvider>
-    );
-  }
+  // Listen to the system color scheme, update the NativeBase theme provider
+  const systemColorScheme = useSystemColorScheme();
+  const colorModeManager = {
+    get: async () => systemColorScheme,
+    set: () => {},
+  };
+
+  return (
+    <NativeBaseProvider
+      theme={nativeBaseTheme}
+      colorModeManager={colorModeManager}
+    >
+      {isLoadingComplete && <RootNav />}
+    </NativeBaseProvider>
+  );
+}
+
+export function RootNav() {
+  const { colorMode } = useColorMode();
+  return (
+    <NavigationContainer
+      linking={linking}
+      theme={colorMode == "dark" ? DarkTheme : DefaultTheme}
+    >
+      <Nav.Navigator>
+        <Nav.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+        <Nav.Screen
+          name="NotFound"
+          component={NotFoundScreen}
+          options={{ title: "Not Found" }}
+        />
+        <Nav.Screen
+          name="CreateProfile"
+          options={{
+            title: "Create Profile",
+          }}
+          component={CreateProfileScreen}
+        />
+      </Nav.Navigator>
+      <StatusBar />
+    </NavigationContainer>
+  );
 }
 
 export type NavParams = {

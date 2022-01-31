@@ -1,211 +1,281 @@
 import * as React from "react";
-import { useState, useRef } from "react";
-import { View, StyleSheet, TextInput as NativeTextInput } from "react-native";
+import { useState, useRef, useCallback } from "react";
+import { ZodType, z, ZodIssue, ZodEnum, ZodNumber } from "zod";
+import {
+  Box,
+  FormControl,
+  Input,
+  VStack,
+  Text,
+  HStack,
+  useColorModeValue,
+  Button,
+  TextArea,
+  useToken,
+} from "native-base";
+import { Feather } from "@expo/vector-icons";
 
-// No types for this
-// @ts-ignore
-import { AutoGrowingTextInput } from "react-native-autogrow-textinput";
+/** Data tracking the correct value of a field, ignoring any incorrect data.  */
+export interface Field<Z extends ZodType<any>> {
+  /**
+   * Zod type validator for the contents of this field.
+   */
+  validator: Z;
 
-import { Text } from "./Themed";
+  /** The current value of the field. Can be undefined */
+  value: z.infer<Z> | undefined;
 
-import Container from "./Container";
+  /** A function to update the current value of the field, wherever it's stored */
+  setValue: (value: z.infer<Z> | undefined) => void;
 
-export interface GroupProps {
-  label?: string;
-  caption?: string;
-  children: React.ReactNode;
+  /** A React component ref to the input element */
+  ref: React.RefObject<Focusable>;
 }
 
-export function Group({ children, label, caption }: GroupProps) {
-  return (
-    <View style={styles.group}>
-      {label && <Text style={styles.groupLabel}>{label.toUpperCase()}</Text>}
-      <View style={styles.groupContents}>{children}</View>
-      {caption && <Text style={styles.groupCaption}>{caption}</Text>}
-    </View>
-  );
+/** Any React element that can receive focus */
+export interface Focusable {
+  /** Move input focus to this element. */
+  focus(): void;
 }
 
-export interface RowProps {
-  // Left-side label
-  left?: string;
-
-  // row contents
-  children: React.ReactNode;
+/** Track the contents of a field in React state */
+export function useField<Z extends ZodType<any>>(validator: Z): Field<Z> {
+  const [value, setValue] = useState<z.infer<Z> | undefined>(undefined);
+  const ref = useRef(null);
+  return { validator, value, setValue, ref };
 }
 
-export function Row({ left, children }: RowProps) {
-  return (
-    <View style={styles.row}>
-      {left && <Text style={styles.rowLeft}>{left}</Text>}
-      {children}
-    </View>
-  );
-}
-
-type AuxInputProps = Omit<
-  React.ComponentProps<typeof NativeTextInput>,
-  "value" | "ref"
->;
-
-export interface InputProps<T> extends AuxInputProps {
-  field: Field<T>;
+export interface FieldProps<Z extends ZodType<any>> {
+  field: Field<Z>;
   nextField?: Field<any>;
-
-  parse: (input: string) => T;
-  display: (value: T) => string;
+  label: string;
+  help?: string;
 }
 
-export function inputProps<T>({
+export function TextField<Z extends ZodType<string | undefined>>({
   field,
   nextField,
-  parse,
-  display,
+  label,
+  help,
   ...rest
-}: InputProps<T>) {
-  return {
-    blurOnSubmit: typeof nextField === "undefined",
-    returnKeyType:
-      typeof nextField === "undefined" ? undefined : ("next" as "next"),
-    onSubmitEditing: () => {
-      if (typeof nextField !== "undefined" && nextField.ref.current != null) {
-        nextField.ref.current.focus();
-      }
-    },
-    style: styles.input,
-    ...rest,
-    onChangeText: (text: string) => {
-      field.setValue(parse(text));
-      if (typeof rest.onChangeText !== "undefined") {
-        rest.onChangeText(text);
-      }
-    },
-    value: display(field.value),
-    ref: field.ref,
-  };
-}
+}: FieldProps<Z> & React.ComponentProps<typeof Input>) {
+  // Track whether the user has submitted this field before
+  let [dirty, setDirty] = useState(false);
+  let clean = !dirty && field.value === "";
 
-export interface TypedInputProps<T> extends AuxInputProps {
-  field: Field<T>;
-  nextField?: Field<any>;
-}
-
-export function TextInput({ field, ...rest }: TypedInputProps<string>) {
-  return (
-    <NativeTextInput
-      {...inputProps({
-        field,
-        parse: (s: string) => s,
-        display: (v: string) => v,
-        ...rest,
-      })}
-    />
-  );
-}
-
-export function ParagraphInput({ field, ...rest }: TypedInputProps<string>) {
-  const [height, setHeight] = useState(20);
+  // Track input validation problems.
+  let zodResult = field.validator.safeParse(field.value);
+  let issues = zodResult.success ? [] : zodResult.error.issues;
 
   return (
-    <AutoGrowingTextInput
-      enableScrollToCaret={true}
-      minHeight={100}
-      textAlignVertical="top"
-      {...inputProps({
-        field,
-        parse: (s: string) => s,
-        display: (v: string) => v,
-        blurOnSubmit: false,
-        enablesReturnKeyAutomatically: true,
-        onSubmitEditing: () => {},
-        returnKeyType: undefined,
-        ...rest,
-      })}
-    />
-  );
-}
-
-export function NumberInput({
-  field,
-  ...rest
-}: TypedInputProps<number | null>) {
-  // Ignore NaNs and nulls
-  let valueStr;
-
-  return (
-    <NativeTextInput
-      {...inputProps({
-        field,
-        parse: (text: string) => parseFloat(text.replace(/[^0-9]/g, "")),
-        display: (num: number | null) => {
-          if (num == null || isNaN(num)) {
-            return "";
-          } else {
-            return num.toString(); // stringify the number
+    <Entry>
+      <Label>{label}</Label>
+      <Input
+        size="md"
+        variant="unstyled"
+        {...rest}
+        value={field.value || ""}
+        onChangeText={field.setValue}
+        onSubmitEditing={() => {
+          if (nextField && nextField.ref.current) {
+            nextField.ref.current.focus();
           }
-        },
-        keyboardType: "numeric",
-        ...rest,
-      })}
-    />
+        }}
+        onBlur={() => {
+          setDirty(true);
+
+          // Remove whitespace around, and null out of empty.
+          let trimmed = field.value && field.value.trim();
+          let nulled = trimmed || undefined;
+          field.setValue(nulled);
+        }}
+        blurOnSubmit={!(nextField && nextField.ref.current)}
+        ref={field.ref}
+      />
+      {dirty &&
+        issues.map((issue, i) => <Error key={i}>{issue.message}</Error>)}
+      {help && <HelpText>{help}</HelpText>}
+    </Entry>
   );
 }
 
-// The state of a field: its value, a handle to update its value, and the reference to the text input element
-export interface Field<T> {
-  value: T;
-  setValue: (newValue: T) => void;
-  ref: React.RefObject<NativeTextInput>;
+export function EnumField<Z extends ZodEnum<any>>({
+  field,
+  nextField,
+  label,
+  help,
+  ...rest
+}: FieldProps<Z>) {
+  // Track input validation problems.
+  let zodResult = field.validator.safeParse(field.value);
+  let issues = zodResult.success ? [] : zodResult.error.issues;
+
+  return (
+    <Entry>
+      <Label>{label}</Label>
+      <Button.Group mx={2} my={2}>
+        {field.validator.options.map((option: string) => (
+          <Button
+            key={option}
+            colorScheme="light"
+            variant={field.value == option ? "solid" : "unstyled"}
+            onPress={() => field.setValue(option)}
+          >
+            {option}
+          </Button>
+        ))}
+      </Button.Group>
+      {field.value != undefined &&
+        issues.map((issue) => <Error>{issue.message}</Error>)}
+      {help && <HelpText>{help}</HelpText>}
+    </Entry>
+  );
 }
 
-// Create a field
-export function useField<T>(initial: T): Field<T> {
-  const [value, setValue] = useState(initial);
-  const ref = useRef(null);
-  return { value, setValue, ref };
+export function NumberField<Z extends ZodNumber>({
+  field,
+  nextField,
+  label,
+  help,
+  ...rest
+}: FieldProps<Z> & React.ComponentProps<typeof Input>) {
+  // Track the string representation of the number for editing
+  let [text, setText] = useState("");
+
+  // Track whether the user has submitted this field before
+  let [dirty, setDirty] = useState(false);
+  let clean = !dirty && text === "";
+
+  // Track input validation problems.
+  let zodResult = field.validator.safeParse(field.value);
+  let issues = zodResult.success ? [] : zodResult.error.issues;
+
+  const onChange = useCallback((value: string) => {
+    // Always update the local value.
+    setText(value);
+
+    // If the text is parseable as a number, update the field value.
+    let maybeParsed = parseFloat(value);
+    if (!isNaN(maybeParsed)) {
+      field.setValue(maybeParsed);
+    } else {
+      field.setValue(undefined);
+    }
+  }, []);
+
+  return (
+    <Entry>
+      <Label>{label}</Label>
+      <Input
+        size="md"
+        variant="unstyled"
+        {...rest}
+        value={text}
+        onChangeText={onChange}
+        onSubmitEditing={() => {
+          setDirty(true);
+          if (nextField && nextField.ref.current) {
+            nextField.ref.current.focus();
+          }
+        }}
+        onBlur={() => setDirty(true)}
+        keyboardType={field.validator.isInt ? "number-pad" : "decimal-pad"}
+        blurOnSubmit={!(nextField && nextField.ref.current)}
+        ref={field.ref}
+      />
+      {dirty &&
+        issues.map((issue, i) => <Error key={i}>{issue.message}</Error>)}
+      {help && <HelpText>{help}</HelpText>}
+    </Entry>
+  );
 }
 
-const insetMargin = 10;
+export function ParagraphField<Z extends ZodType<string | undefined>>({
+  field,
+  nextField,
+  label,
+  help,
+  ...rest
+}: FieldProps<Z> & React.ComponentProps<typeof Input>) {
+  // Track whether the user has submitted this field before
+  let [dirty, setDirty] = useState(false);
+  let clean = !dirty && field.value === "";
 
-const styles = StyleSheet.create({
-  row: {
-    display: "flex",
-    flex: 1,
-    alignItems: "center",
-    flexDirection: "row",
-    marginHorizontal: insetMargin,
-  },
-  rowLeft: {
-    width: 50,
-    color: "#555",
-    textAlign: "right",
-    marginRight: 10,
-  },
+  // Track input validation problems.
+  let zodResult = field.validator.safeParse(field.value);
+  let issues = zodResult.success ? [] : zodResult.error.issues;
 
-  input: {
-    // paddingVertical doesn't work here because of a bug in react-native.
-    paddingTop: insetMargin,
-    paddingBottom: insetMargin,
-    flex: 1,
-  },
+  return (
+    <Entry>
+      <Label>{label}</Label>
+      {help && <HelpText>{help}</HelpText>}
+      <Input
+        size="md"
+        variant="unstyled"
+        {...rest}
+        value={field.value || ""}
+        onChangeText={field.setValue}
+        multiline
+        textAlignVertical="top"
+        minHeight={useToken("space", 8)}
+        onBlur={() => {
+          setDirty(true);
 
-  group: {
-    marginBottom: 20,
-  },
-  groupLabel: {
-    fontSize: 12,
-    marginBottom: 4,
-    marginHorizontal: insetMargin,
-    color: "#555",
-  },
-  groupCaption: {
-    marginTop: 8,
-    marginHorizontal: insetMargin,
-    fontSize: 12,
-    color: "#666",
-  },
-  groupContents: {
-    backgroundColor: "white",
-    borderRadius: 10,
-  },
-});
+          // Remove whitespace around, and null out of empty.
+          let trimmed = field.value && field.value.trim();
+          let nulled = trimmed || undefined;
+          field.setValue(nulled);
+        }}
+        blurOnSubmit={!(nextField && nextField.ref.current)}
+        ref={field.ref}
+      />
+      {dirty &&
+        issues.map((issue, i) => <Error key={i}>{issue.message}</Error>)}
+    </Entry>
+  );
+}
+
+/** Group surrounding an input, its label, helper text, and any validation errors. */
+function Entry({ children }: { children: React.ReactNode }) {
+  return (
+    <VStack
+      bg={useColorModeValue("white", "muted.800")}
+      rounded="md"
+      px={1}
+      py={2}
+    >
+      {children}
+    </VStack>
+  );
+}
+
+/** The name of an input. */
+function Label({ children }: { children: string }) {
+  return (
+    <Text fontWeight="bold" mx={2}>
+      {children}
+    </Text>
+  );
+}
+
+/** Render explanatory help text for the input */
+function HelpText({ children }: { children: string }) {
+  return (
+    <Text mx={2} color="muted.500">
+      {children}
+    </Text>
+  );
+}
+
+function Error({ children }: { children: string }) {
+  return (
+    <HStack alignItems="flex-start" mx={2}>
+      <Box alignSelf="flex-start" justifyContent="center" h={5}>
+        <Feather name="alert-circle" color="red" />
+      </Box>
+      <Text px={2} color="error.600">
+        {children}
+      </Text>
+    </HStack>
+  );
+}

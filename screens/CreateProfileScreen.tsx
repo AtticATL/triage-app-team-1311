@@ -9,77 +9,116 @@ import {
   ScrollView,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { Text, Heading, VStack, Box, HStack } from "native-base";
+import { z } from "zod";
+
 import { NavSubProps as RootNavSubProps } from "../App";
-import { confirm } from "../lib/alert";
 
 import { useExitConfirmation } from "../hooks/useExitConfirmation";
 
-import { Text, View } from "../components/Themed";
-import Container from "../components/Container";
-import { Heading } from "../components/Typography";
-
+import * as Profile from "../lib/profile";
+import { confirm } from "../lib/alert";
 import {
-  Group,
-  Row,
-  TextInput,
-  NumberInput,
-  ParagraphInput,
   useField,
+  TextField,
+  EnumField,
+  NumberField,
+  ParagraphField,
 } from "../components/Form";
 
-export default function ModalScreen({
+export default function CreateProfileScreen({
   navigation,
 }: RootNavSubProps<"CreateProfile">) {
   // Confirm exit
   useExitConfirmation(true);
 
-  const firstName = useField("");
-  const lastName = useField("");
-  const age = useField<number | null>(null);
-  const pastMedicalHistory = useField("");
-  const infectionHistory = useField("");
+  let name = useField(Profile.Name);
+  let birthYear = useField(Profile.BirthYear);
+  let sex = useField(Profile.Sex);
+
+  let currentInfectionHistory = useField(Profile.Paragraph);
+  let pastHistory = useField(Profile.Paragraph);
+  let otherNotes = useField(Profile.Paragraph.optional());
+
+  let partialProfileValidator = Profile.Profile.deepPartial();
+  let draftProfile: z.infer<typeof partialProfileValidator> = {
+    identity: {
+      name: name.value,
+      birthYear: birthYear.value,
+      sex: sex.value,
+    },
+    patientHistory: {
+      currentInfectionHistory: currentInfectionHistory.value,
+      pastHistory: pastHistory.value,
+      otherNotes: otherNotes.value,
+    },
+    triageChecklist: {},
+    attachments: [],
+  };
+
+  let draftValidation = Profile.Profile.safeParse(draftProfile);
 
   return (
     <KeyboardAwareScrollView>
-      <Container margin>
-        <Heading h2>Demographics</Heading>
+      <VStack mx={4} mt={4} space={8} safeAreaBottom safeAreaX>
+        <VStack space={4}>
+          <Heading>Identity</Heading>
+          <Text>Who is the patient?</Text>
 
-        <Group label="Name">
-          <Row left="First">
-            <TextInput field={firstName} nextField={lastName} />
-          </Row>
-          <Row left="Last">
-            <TextInput field={lastName} nextField={age} />
-          </Row>
-        </Group>
+          <TextField
+            field={name}
+            nextField={sex}
+            label="Name"
+            help="The patient's full legal name"
+            placeholder="John Doe"
+            size="2xl"
+          />
 
-        <Group label="Age">
-          <Row>
-            <NumberInput field={age} nextField={pastMedicalHistory} />
-          </Row>
-        </Group>
+          <EnumField
+            field={sex}
+            nextField={birthYear}
+            label="Sex"
+            help="The patient's sex, as assigned at birth"
+          />
 
-        <Group
-          label="History of Infection"
-          caption="The history and symptoms of this infection"
-        >
-          <Row>
-            <ParagraphInput field={infectionHistory} />
-          </Row>
-        </Group>
+          <NumberField
+            field={birthYear}
+            nextField={currentInfectionHistory}
+            label="Birth Year"
+          />
+        </VStack>
 
-        <Group
-          label="Past Medical History"
-          caption="This patient's past medical history, including prior conditions"
-        >
-          <Row>
-            <ParagraphInput
-              field={pastMedicalHistory}
-              nextField={infectionHistory}
-            />
-          </Row>
-        </Group>
-      </Container>
+        <VStack space={4}>
+          <Heading>History</Heading>
+          <Text>The history of the infection</Text>
+
+          <ParagraphField
+            field={currentInfectionHistory}
+            nextField={pastHistory}
+            label="Infection History"
+            help="The history of the current infection"
+          />
+
+          <ParagraphField
+            field={pastHistory}
+            nextField={otherNotes}
+            label="Past History"
+            help="The past medical history of the patient"
+          />
+
+          <ParagraphField
+            field={otherNotes}
+            label="Other Notes"
+            help="Any other important information"
+          />
+        </VStack>
+
+        <VStack space={4}>
+          <Heading>Imaging and Attachments</Heading>
+          <Text>Upload anything</Text>
+        </VStack>
+        <Text>{JSON.stringify(draftProfile, null, 4)}</Text>
+      </VStack>
     </KeyboardAwareScrollView>
   );
 }

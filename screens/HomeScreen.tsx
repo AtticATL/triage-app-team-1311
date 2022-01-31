@@ -11,18 +11,16 @@ import {
 import { NavSubProps as RootNavSubProps } from "../App";
 import * as colors from "../constants/Colors";
 import TileButton from "../components/TileButton";
-import Container from "../components/Container";
 
-import { Text, View } from "../components/Themed";
-import { Heading } from "../components/Typography";
+import { Text, Heading, VStack } from "native-base";
 
 export default function HomeScreen({ navigation }: RootNavSubProps<"Home">) {
   return (
     <ScrollView>
-      <Container safe margin>
-        <Heading h1>TriageApp</Heading>
+      <VStack safeArea p={8} space={8}>
+        <VStack space={4}>
+          <Heading size="xl">TriageApp</Heading>
 
-        <View style={{ backgroundColor: "transparent", marginBottom: 20 }}>
           <TileButton
             title="Create a Profile"
             icon="corner-up-right"
@@ -41,11 +39,15 @@ export default function HomeScreen({ navigation }: RootNavSubProps<"Home">) {
               )
             }
           />
-        </View>
+        </VStack>
 
-        <Heading h2>Profile Log</Heading>
-        <Text>No profiles yet. Send a profile to see it here for review.</Text>
-      </Container>
+        <VStack space={4}>
+          <Heading size="md">Profile Log</Heading>
+          <Text>
+            No profiles yet. Send a profile to see it here for review.
+          </Text>
+        </VStack>
+      </VStack>
 
       <StatusBar />
     </ScrollView>
