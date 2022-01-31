@@ -112,11 +112,13 @@ export default function CreateProfileScreen({
   const draftValidation = Profile.Profile.safeParse(draftProfile);
 
   return (
-    <KeyboardAwareScrollView>
+    <KeyboardAwareScrollView
+      extraHeight={100}
+      enableResetScrollToCoords={false}
+    >
       <VStack mx={4} mt={4} space={8} safeAreaBottom safeAreaX>
         <VStack space={4}>
           <Heading>Identity</Heading>
-          <Text>Who is the patient?</Text>
 
           <TextField
             field={name}
@@ -142,7 +144,10 @@ export default function CreateProfileScreen({
 
         <VStack space={4}>
           <Heading>History</Heading>
-          <Text>The history of the infection</Text>
+          <Text>
+            The patient's medical history, as well as the history of the present
+            infection.
+          </Text>
 
           <ParagraphField
             field={currentInfectionHistory}
@@ -196,13 +201,13 @@ export default function CreateProfileScreen({
           </VStack>
 
           {attachments.map((attachment) => (
-            <Entry space={2} px={2} py={2}>
+            <Entry space={2} px={2} py={2} key={attachment.blob.sha256}>
               <BlobMedia hash={attachment.blob.sha256} />
               <HStack justifyContent="center" alignItems="center">
                 <Button
                   variant="ghost"
-                  _text={{ color: "error.700" }}
-                  colorScheme="error"
+                  colorScheme="danger"
+                  _pressed={{ bg: "danger.400" }}
                   leftIcon={<Icon as={Feather} name="trash-2" size="xs" />}
                   onPress={() => {
                     setAttachments((as) =>
@@ -217,7 +222,7 @@ export default function CreateProfileScreen({
           ))}
 
           <Button
-            leftIcon={<Icon as={Feather} name="upload" size="sm" />}
+            leftIcon={<Icon as={Feather} name="upload" size="xs" />}
             onPress={() => attach()}
           >
             Attach Media
