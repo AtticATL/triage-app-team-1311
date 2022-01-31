@@ -9,6 +9,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavSubProps as RootNavSubProps } from "../App";
 import * as colors from "../constants/Colors";
 import TileButton from "../components/TileButton";
@@ -81,9 +82,13 @@ function ProfileLog() {
 }
 
 function ProfileCard({ profile }: { profile: Profile }) {
+  // TODO: obviously, remove clear-storage dev feature when names are tapped
+
   return (
     <VStack bg="white" p={4} rounded={4}>
-      <Text fontSize="lg">{profile.identity.name}</Text>
+      <Pressable onPress={() => AsyncStorage.clear()}>
+        <Text fontSize="lg">{profile.identity.name}</Text>
+      </Pressable>
       <Text>
         {profile.identity.sex}, Age{" "}
         {new Date().getFullYear() - profile.identity.birthYear}
