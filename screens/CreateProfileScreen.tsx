@@ -3,7 +3,6 @@ import * as React from "react";
 import { useCallback, useState, useRef } from "react";
 import {
   KeyboardAvoidingView,
-  Alert,
   Platform,
   StyleSheet,
   ScrollView,
@@ -12,6 +11,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import {
   Text,
   Heading,
+  Alert,
   Button,
   VStack,
   Box,
@@ -29,6 +29,7 @@ import { NavSubProps as RootNavSubProps } from "../App";
 import { useExitConfirmation } from "../hooks/useExitConfirmation";
 
 import { storeBlob, getBlob } from "../lib/blobStorage";
+import { storeProfile } from "../lib/profileStorage";
 import * as Profile from "../lib/profile";
 import {
   QUESTIONS,
@@ -51,7 +52,7 @@ export default function CreateProfileScreen({
   navigation,
 }: RootNavSubProps<"CreateProfile">) {
   // Confirm exit
-  useExitConfirmation(true);
+  // useExitConfirmation(true); // TODO: add this back when we can disable it
 
   const name = useField(Profile.Name);
   const birthYear = useField(Profile.BirthYear);
@@ -111,12 +112,20 @@ export default function CreateProfileScreen({
 
   const draftValidation = Profile.Profile.safeParse(draftProfile);
 
+  const submit = useCallback(() => {
+    // If, by any chance, something's still wrong, throw.
+    storeProfile(Profile.Profile.parse(draftProfile));
+
+    // Pop this view off the stack.
+    navigation.pop();
+  }, [draftProfile]);
+
   return (
     <KeyboardAwareScrollView
       extraHeight={100}
       enableResetScrollToCoords={false}
     >
-      <VStack mx={4} mt={4} space={8} safeAreaBottom safeAreaX>
+      <VStack mx={4} mt={4} space={8} safeAreaBottom safeAreaX pb={16}>
         <VStack space={4}>
           <Heading>Identity</Heading>
 
@@ -228,8 +237,52 @@ export default function CreateProfileScreen({
             Attach Media
           </Button>
         </VStack>
-        <Text>{JSON.stringify(draftProfile, null, 4)}</Text>
-        <Text>{JSON.stringify(draftValidation, null, 4)}</Text>
+
+        <VStack mt={8}>
+          {draftValidation.success ? (
+            <Button
+              py={8}
+              size="lg"
+              colorScheme="success"
+              rightIcon={<Icon as={Feather} name="arrow-right" size="sm" />}
+              onPress={submit}
+            >
+              Submit Profile
+            </Button>
+          ) : (
+            <Alert
+              variant="solid"
+              status="warning"
+              colorScheme="warning"
+              alignItems="stretch"
+              pl={4}
+              py={8}
+            >
+              <VStack alignItems="flex-start">
+                <Icon
+                  as={Feather}
+                  name="alert-triangle"
+                  color="white"
+                  size="sm"
+                />
+                <Text fontSize="lg" mt={4} color="white">
+                  This profile can't be submitted yet.
+                </Text>
+                <Text color="white" mt={2}>
+                  We found these problems with the data you entered:
+                </Text>
+                {draftValidation.error.issues.map((issue) => (
+                  <Text ml={4} color="white">
+                    {issue.message}
+                  </Text>
+                ))}
+                <Text color="white" mt={3}>
+                  Fix these issues to submit the profile.
+                </Text>
+              </VStack>
+            </Alert>
+          )}
+        </VStack>
       </VStack>
     </KeyboardAwareScrollView>
   );
