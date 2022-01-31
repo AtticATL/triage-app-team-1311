@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
-import { useState, useRef } from "react";
+import { useCallback, useState, useRef } from "react";
 import {
   KeyboardAvoidingView,
   Alert,
@@ -9,13 +9,26 @@ import {
   ScrollView,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { Text, Heading, VStack, Box, HStack } from "native-base";
+import {
+  Text,
+  Heading,
+  Button,
+  VStack,
+  Box,
+  Icon,
+  HStack,
+  useToken,
+} from "native-base";
 import { z } from "zod";
+import * as ImagePicker from "expo-image-picker";
+import * as Crypto from "expo-crypto";
+import { Feather } from "@expo/vector-icons";
 
 import { NavSubProps as RootNavSubProps } from "../App";
 
 import { useExitConfirmation } from "../hooks/useExitConfirmation";
 
+import { storeBlob, getBlob } from "../lib/blobStorage";
 import * as Profile from "../lib/profile";
 import {
   QUESTIONS,
@@ -32,6 +45,7 @@ import {
   Entry,
   Checkbox,
 } from "../components/Form";
+import BlobMedia from "../components/BlobMedia";
 
 export default function CreateProfileScreen({
   navigation,
@@ -51,6 +65,34 @@ export default function CreateProfileScreen({
   let [answers, setAnswers] =
     useState<Record<string, boolean>>(EMPTY_ANSWER_RECORD);
 
+  // Store attachments
+  let [attachments, setAttachments] = useState<Array<Profile.Attachment>>([]);
+
+  const attach = useCallback(async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      quality: 1,
+      base64: true, // Give us the base64-encoded binary data here
+    });
+
+    // If they cancelled, bail out.
+    if (result.cancelled) {
+      return;
+    }
+
+    // Store the image.
+    if (!result.base64) {
+      throw new TypeError("base64 image data not returned from library picker");
+    }
+    let sha256hex = await storeBlob(result.base64);
+
+    setAttachments((as) => [
+      ...as,
+      { role: "Other", mimeType: "image/jpeg", blob: { sha256: sha256hex } },
+    ]);
+  }, []);
+
   const partialProfileValidator = Profile.Profile.deepPartial();
   const draftProfile: z.infer<typeof partialProfileValidator> = {
     identity: {
@@ -64,7 +106,7 @@ export default function CreateProfileScreen({
       pastHistory: pastHistory.value,
       otherNotes: otherNotes.value,
     },
-    attachments: [],
+    attachments,
   };
 
   const draftValidation = Profile.Profile.safeParse(draftProfile);
@@ -81,7 +123,6 @@ export default function CreateProfileScreen({
             nextField={sex}
             label="Name"
             help="The patient's full legal name"
-            placeholder="John Doe"
             size="2xl"
           />
 
@@ -144,7 +185,43 @@ export default function CreateProfileScreen({
 
         <VStack space={4}>
           <Heading>Imaging and Attachments</Heading>
-          <Text>Upload anything</Text>
+          <VStack space={2}>
+            <Text>
+              Upload photos of CT scans or any other relevant imagery.
+            </Text>
+            <Text>
+              Quality is not vitally important here: photos of your computer
+              screen are acceptable.
+            </Text>
+          </VStack>
+
+          {attachments.map((attachment) => (
+            <Entry space={2} px={2} py={2}>
+              <BlobMedia hash={attachment.blob.sha256} />
+              <HStack justifyContent="center" alignItems="center">
+                <Button
+                  variant="ghost"
+                  _text={{ color: "error.700" }}
+                  colorScheme="error"
+                  leftIcon={<Icon as={Feather} name="trash-2" size="xs" />}
+                  onPress={() => {
+                    setAttachments((as) =>
+                      as.filter((a) => a.blob.sha256 != attachment.blob.sha256)
+                    );
+                  }}
+                >
+                  Remove
+                </Button>
+              </HStack>
+            </Entry>
+          ))}
+
+          <Button
+            leftIcon={<Icon as={Feather} name="upload" size="sm" />}
+            onPress={() => attach()}
+          >
+            Attach Media
+          </Button>
         </VStack>
         <Text>{JSON.stringify(draftProfile, null, 4)}</Text>
         <Text>{JSON.stringify(draftValidation, null, 4)}</Text>
