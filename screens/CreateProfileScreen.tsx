@@ -271,8 +271,8 @@ export default function CreateProfileScreen({
                 <Text color="white" mt={2}>
                   We found these problems with the data you entered:
                 </Text>
-                {draftValidation.error.issues.map((issue) => (
-                  <Text ml={4} color="white">
+                {draftValidation.error.issues.map((issue, i) => (
+                  <Text ml={4} color="white" key={i}>
                     {issue.message}
                   </Text>
                 ))}
