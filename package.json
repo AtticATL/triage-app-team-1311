@@ -61,6 +61,7 @@
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",
     "expo-cli": "^5.2.0",
+    "firebase-tools": "^10.2.1",
     "jest-expo": "~43.0.0",
     "prettier": "^2.5.1",
     "ts-node": "^10.4.0",
