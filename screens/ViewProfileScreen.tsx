@@ -12,7 +12,7 @@ export default function ViewProfileScreen({
 
   return (
     <Stack>
-      <Text>TODO: MAKE THIS SCREEN</Text>
+      <Text>{JSON.stringify(profile, null, 2)}</Text>
     </Stack>
   );
 }
