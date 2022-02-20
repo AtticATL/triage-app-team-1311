@@ -15,9 +15,10 @@ import * as colors from "../constants/Colors";
 import TileButton from "../components/TileButton";
 import { Profile } from "../lib/profile";
 import { listProfiles } from "../lib/profileStorage";
-import { Spinner, Text, Heading, VStack } from "native-base";
+import { Spinner, Text, Heading, VStack, useColorModeValue } from "native-base";
 import { NavigationContainer } from "@react-navigation/native";
 import { useLinkProps } from "@react-navigation/native";
+import { nativeBaseTheme } from "../lib/nativeBaseTheme";
 
 export default function HomeScreen({ navigation }: RootNavSubProps<"Home">) {
   return (
@@ -82,9 +83,10 @@ function ProfileCard({ profile }: { profile: Profile }) {
   // TODO: obviously, remove clear-storage dev feature when names are tapped
 
   const tapProps = useLinkProps({ to: {screen: "ViewProfile", params: { profile: profile}} });
+  const bgProps = useColorModeValue("white", "#121212");
 
   return (
-    <VStack bg="white" p={4} rounded={4}>
+    <VStack bg={bgProps} p={4} rounded={4}>
       <Pressable {...tapProps} >
         <Text fontSize="lg">{profile.identity.name}</Text>
       </Pressable>
