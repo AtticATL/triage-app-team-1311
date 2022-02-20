@@ -5,11 +5,8 @@ import { Text, Heading, VStack, Input, Button, Icon } from "native-base";
 import { TextField, useField } from "../components/Form";
 import TileButton from "../components/TileButton";
 import { z } from "zod";
-import { setupURLPolyfill } from "react-native-url-polyfill";
 import { Feather } from "@expo/vector-icons";
-import { decode } from "base-64";
-
-setupURLPolyfill();
+import { decodeText, decodeBase64 } from "../lib/storage/encoding";
 
 /**
  * The URL validator for the patient profile
@@ -33,10 +30,11 @@ export default function RecieveProfileScreen({
       />
       <Button
         onPress={() => {
-          if (validURL) {
-            let profile = JSON.parse(decode(url.value.substring(21)));
-            console.log(profile);
-            navigation.navigate("ViewProfile");
+          if (typeof url.value !== "undefined" && validURL) {
+            let profile = JSON.parse(
+              decodeText(decodeBase64(url.value.substring(21)))
+            );
+            navigation.navigate("ViewProfile", { profile });
           }
         }}
         isDisabled={!validURL}

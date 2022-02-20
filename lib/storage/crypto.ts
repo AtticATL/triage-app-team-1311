@@ -1,16 +1,11 @@
-import crypto from "isomorphic-webcrypto";
+import { BufferSource } from "./encoding";
+import * as ExpoRandom from "expo-random";
 
 /** AES-GCM IVs are 12 bytes long **/
 const IV_LENGTH_BYTES = 12;
 
 /** 256-bit keys are 8 bytes long */
 const KEY_LENGTH_BYTES = 256 / 8;
-
-/**
- * Web Crypto operations can take either the buffer allocation itself (ArrayBuffer), or
- * a typed view over that allocation (in our case, Uint8Array, although others are acceptable.)
- */
-type BufferSource = ArrayBuffer | Uint8Array;
 
 /**
  * Generate a symmetric encryption key.
@@ -47,25 +42,8 @@ export async function importKey(data: BufferSource): Promise<CryptoKey> {
  * Generate an initialization vector for AES-GCM.
  */
 async function generateIv(): Promise<ArrayBuffer> {
-  // IVs for AES-GCM need to be 96 bits (12 bytes) long.
-  // Generate random bytes with the secure random number generator.
-  const buf = new ArrayBuffer(IV_LENGTH_BYTES);
-  crypto.getRandomValues(new Uint8Array(buf));
-  return buf;
-}
-
-/**
- * Encode some text as UTF-8 binary data.
- */
-export function encodeText(text: string): ArrayBuffer {
-  return new TextEncoder().encode(text).buffer;
-}
-
-/**
- * Decode a string from UTF-8 encoded binary data.
- */
-export function decodeText(buf: BufferSource): string {
-  return new TextDecoder("utf-8").decode(buf);
+  const bytes = ExpoRandom.getRandomBytes(IV_LENGTH_BYTES);
+  return bytes.buffer;
 }
 
 /**
@@ -133,4 +111,13 @@ export async function decrypt(
     key,
     ciphertext
   );
+}
+
+/**
+ * Compute the SHA-256 hash of the input buffer.
+ *
+ * @param data The buffer to hash.
+ */
+export async function hash(data: ArrayBuffer): Promise<ArrayBuffer> {
+  return crypto.subtle.digest({ name: "SHA-256" }, data);
 }

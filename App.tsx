@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { NativeBaseProvider, useColorMode } from "native-base";
 import useCachedResources from "./hooks/useCachedResources";
@@ -22,6 +23,10 @@ import RecieveProfileScreen from "./screens/RecieveProfileScreen";
 import ViewProfileScreen from "./screens/ViewProfileScreen";
 import { Profile } from "./lib/profile";
 
+import "text-encoding";
+import "react-native-url-polyfill/auto";
+import PolyfillCrypto from "./vendor/react-native-webview-crypto";
+
 export default function App() {
   const isLoadingComplete = useCachedResources();
 
@@ -33,12 +38,15 @@ export default function App() {
   };
 
   return (
-    <NativeBaseProvider
-      theme={nativeBaseTheme}
-      colorModeManager={colorModeManager}
-    >
-      {isLoadingComplete && <RootNav />}
-    </NativeBaseProvider>
+    <>
+      <PolyfillCrypto />
+      <NativeBaseProvider
+        theme={nativeBaseTheme}
+        colorModeManager={colorModeManager}
+      >
+        {isLoadingComplete && <RootNav />}
+      </NativeBaseProvider>
+    </>
   );
 }
 

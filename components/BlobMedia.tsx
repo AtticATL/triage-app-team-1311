@@ -2,27 +2,29 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import { Box, Spinner } from "native-base";
 
+import { Handle, get } from "../lib/storage/storage";
+import { encodeBase64 } from "../lib/storage/encoding";
+
 // @ts-ignore
 import { Image } from "native-base";
 
-import { getBlob } from "../lib/blobStorage";
-
-export default function BlobMedia({ hash }: { hash: string }) {
+export default function BlobMedia({ handle }: { handle: Handle }) {
   let [dataUri, setDataUri] = useState<string | null>(null);
 
-  // Every time the hash changes, reload the image data from blob storage.
+  // Every time the handle changes, reload the image data from blob storage.
   useEffect(() => {
     async function loadData() {
-      let b64 = await getBlob(hash);
-
-      if (b64 == null) {
-        throw new Error(`Could not load image with hash: ${hash}`);
+      let data = await get(handle);
+      if (data == null) {
+        throw new Error(`Could not load image with hash: ${handle.hash}`);
       }
+
+      let b64 = encodeBase64(data);
 
       setDataUri(`data:image/jpeg;base64,${b64}`);
     }
     loadData();
-  }, [hash]);
+  }, [handle]);
 
   if (dataUri == null) {
     return (

@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useState, useRef, useEffect } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -17,6 +17,7 @@ import {
   Box,
   Icon,
   HStack,
+  Spinner,
   useToken,
 } from "native-base";
 import { z } from "zod";
@@ -28,7 +29,13 @@ import { NavSubProps as RootNavSubProps } from "../App";
 
 import { useExitConfirmation } from "../hooks/useExitConfirmation";
 
-import { storeBlob, getBlob } from "../lib/blobStorage";
+import * as Storage from "../lib/storage/storage";
+import {
+  encodeText,
+  decodeText,
+  encodeBase64,
+  decodeBase64,
+} from "../lib/storage/encoding";
 import { storeProfile } from "../lib/profileStorage";
 import * as Profile from "../lib/profile";
 import {
@@ -47,7 +54,6 @@ import {
   Checkbox,
 } from "../components/Form";
 import BlobMedia from "../components/BlobMedia";
-import { encode } from "base-64";
 
 export default function CreateProfileScreen({
   navigation,
@@ -68,7 +74,9 @@ export default function CreateProfileScreen({
     useState<Record<string, boolean>>(EMPTY_ANSWER_RECORD);
 
   // Store attachments
-  let [attachments, setAttachments] = useState<Array<Profile.Attachment>>([]);
+  let [uploads, setUploads] = useState<
+    Array<{ attachment: Profile.Attachment; earlyHandle: Storage.EarlyHandle }>
+  >([]);
 
   const attach = useCallback(async () => {
     // No permissions request is necessary for launching the image library
@@ -87,13 +95,52 @@ export default function CreateProfileScreen({
     if (!result.base64) {
       throw new TypeError("base64 image data not returned from library picker");
     }
-    let sha256hex = await storeBlob(result.base64);
+    const buf = decodeBase64(result.base64);
+    let earlyHandle = await Storage.put(buf);
 
-    setAttachments((as) => [
+    // If we've already got this hash, don't double-attach it.
+    if (
+      uploads.some((u) => u.attachment.blob.hash == earlyHandle.handle.hash)
+    ) {
+      return;
+    }
+
+    setUploads((as) => [
       ...as,
-      { role: "Other", mimeType: "image/jpeg", blob: { sha256: sha256hex } },
+      {
+        attachment: {
+          role: "Other",
+          mimeType: "image/jpeg",
+          blob: earlyHandle.handle,
+        },
+        earlyHandle,
+      },
     ]);
-  }, []);
+  }, [uploads]);
+
+  // Track whether all the uploads are durably uploaded
+  let [uploadsReady, setUploadsReady] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+
+    // Flag uploads as not ready
+    setUploadsReady(false);
+
+    // Flag uploads as ready when they all complete.
+    const durableProms = uploads.map(
+      (u) => u.earlyHandle.waitForDurableStorage
+    );
+    Promise.all(durableProms).then(() => {
+      if (!cancelled) {
+        setUploadsReady(true);
+      }
+    });
+
+    // If we re-evaluate the effect, never setUploadsReady
+    return () => {
+      cancelled = true;
+    };
+  }, [uploads]);
 
   const partialProfileValidator = Profile.Profile.deepPartial();
   const draftProfile: z.infer<typeof partialProfileValidator> = {
@@ -108,7 +155,7 @@ export default function CreateProfileScreen({
       pastHistory: pastHistory.value,
       otherNotes: otherNotes.value,
     },
-    attachments,
+    attachments: uploads.map((u) => u.attachment),
   };
 
   const draftValidation = Profile.Profile.safeParse(draftProfile);
@@ -116,7 +163,9 @@ export default function CreateProfileScreen({
   const submit = useCallback(() => {
     // If, by any chance, something's still wrong, throw.
     storeProfile(Profile.Profile.parse(draftProfile));
-    let url = "http://oi-triage-app/" + encode(JSON.stringify(draftProfile));
+    let url =
+      "http://oi-triage-app/" +
+      encodeBase64(encodeText(JSON.stringify(draftProfile)));
     console.log(url);
     // Pop this view off the stack.
     navigation.pop();
@@ -211,9 +260,9 @@ export default function CreateProfileScreen({
             </Text>
           </VStack>
 
-          {attachments.map((attachment) => (
-            <Entry space={2} px={2} py={2} key={attachment.blob.sha256}>
-              <BlobMedia hash={attachment.blob.sha256} />
+          {uploads.map(({ attachment, earlyHandle }) => (
+            <Entry space={2} px={2} py={2} key={attachment.blob.hash}>
+              <BlobMedia handle={attachment.blob} />
               <HStack justifyContent="center" alignItems="center">
                 <Button
                   variant="ghost"
@@ -221,8 +270,10 @@ export default function CreateProfileScreen({
                   _pressed={{ bg: "danger.400" }}
                   leftIcon={<Icon as={Feather} name="trash-2" size="xs" />}
                   onPress={() => {
-                    setAttachments((as) =>
-                      as.filter((a) => a.blob.sha256 != attachment.blob.sha256)
+                    setUploads((us) =>
+                      us.filter(
+                        (u) => u.attachment.blob.hash != attachment.blob.hash
+                      )
                     );
                   }}
                 >
@@ -240,8 +291,8 @@ export default function CreateProfileScreen({
           </Button>
         </VStack>
 
-        <VStack mt={8}>
-          {draftValidation.success ? (
+        <VStack mt={8} space={4}>
+          {uploadsReady && draftValidation.success && (
             <Button
               py={8}
               size="lg"
@@ -251,7 +302,28 @@ export default function CreateProfileScreen({
             >
               Submit Profile
             </Button>
-          ) : (
+          )}
+
+          {!uploadsReady && (
+            <Alert variant="solid" status="success" alignItems="stretch">
+              <HStack space={4}>
+                <Icon
+                  as={Feather}
+                  name="upload-cloud"
+                  color="white"
+                  size="sm"
+                />
+                <Text color="white">Uploading attachments...</Text>
+                <Spinner
+                  ml={"auto"}
+                  color="white"
+                  accessibilityLabel="Uploading attachments"
+                />
+              </HStack>
+            </Alert>
+          )}
+
+          {!draftValidation.success && (
             <Alert
               variant="solid"
               status="warning"

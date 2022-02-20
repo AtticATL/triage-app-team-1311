@@ -40,14 +40,15 @@ describe("patient sex", () => {
   });
 });
 
-describe("hex-encoded data", () => {
+describe("b64-encoded data", () => {
   it("accepts valid data", () => {
-    expect(Profile.HexString.parse("facebeef1234567890"));
+    expect(Profile.Base64String.parse(exampleHandle.hash));
+    expect(Profile.Base64String.parse(exampleHandle.key));
   });
 
   it("rejects invalid data", () => {
-    expect(() => Profile.HexString.parse("")).toThrow();
-    expect(() => Profile.HexString.parse("this is not hex")).toThrow();
+    expect(() => Profile.Base64String.parse("")).toThrow();
+    expect(() => Profile.Base64String.parse("this is not hex")).toThrow();
   });
 });
 
@@ -128,17 +129,22 @@ describe("triage checklist", () => {
   });
 });
 
+const exampleHandle = {
+  hash: "2vCZPKVFuv3/YRtgvp/H1RooMM1ZXvUut8vxNlXHV/M=",
+  key: "tXCdeLc4JOxas816eQisjwexlF1jo/Bl3k1ApNOzGAk=",
+};
+
 describe("attachment storage", () => {
   it("accepts valid data", () => {
     Profile.Attachment.parse({
       role: "CtScan",
       mimeType: "image/jpeg",
-      blob: { sha256: "deadbeef".padEnd(64, "f") },
+      blob: exampleHandle,
     });
     Profile.Attachment.parse({
       role: "Other",
       mimeType: "image/png",
-      blob: { sha256: "faceface".padEnd(64, "e") },
+      blob: exampleHandle,
     });
   });
 
@@ -147,21 +153,21 @@ describe("attachment storage", () => {
       Profile.Attachment.parse({
         role: "bad invalid role",
         mimeType: "image/jpeg",
-        blob: { sha256: "deadbeef".padEnd(64, "f") },
+        blob: { ...exampleHandle, hash: "nope" },
       });
     }).toThrow();
     expect(() => {
       Profile.Attachment.parse({
         role: "Other",
         mimeType: "application/something-we-dont-know",
-        blob: { sha256: "deadbeef".padEnd(64, "f") },
+        blob: exampleHandle,
       });
     }).toThrow();
     expect(() => {
       Profile.Attachment.parse({
         role: "Other",
         mimeType: "image/jpeg",
-        blob: { sha256: "cafebabe" },
+        blob: { ...exampleHandle, key: "oops" },
       });
     }).toThrow();
   });
@@ -185,12 +191,12 @@ describe("patient profile", () => {
         {
           role: "Other",
           mimeType: "image/png",
-          blob: { sha256: "1234".padEnd(64, "0") },
+          blob: exampleHandle,
         },
         {
           role: "CtScan",
           mimeType: "image/png",
-          blob: { sha256: "1234".padEnd(64, "0") },
+          blob: exampleHandle,
         },
       ],
     });

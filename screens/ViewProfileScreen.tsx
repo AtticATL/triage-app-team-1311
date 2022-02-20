@@ -96,6 +96,7 @@ export default function ViewProfileScreen({
               <Checkbox
                 colorScheme="dark"
                 value={id}
+                key={id}
                 isChecked={profile.triageChecklist[id]}
               >
                 <Text fontSize="md">{"  " + QUESTIONS[id].text}</Text>
@@ -118,10 +119,10 @@ export default function ViewProfileScreen({
               space={2}
               px={2}
               py={2}
-              key={attachment.blob.sha256}
+              key={attachment.blob.hash}
               rounded={20}
             >
-              <BlobMedia hash={attachment.blob.sha256} />
+              <BlobMedia handle={attachment.blob} />
               <HStack justifyContent="center" alignItems="center"></HStack>
             </Entry>
           ))}

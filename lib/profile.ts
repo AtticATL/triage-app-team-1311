@@ -33,14 +33,13 @@ export type Sex = z.infer<typeof Sex>;
 /**
  * A hex-encoded data string
  */
-export const HexString = z
+export const Base64String = z
   .string()
   .min(1)
-  .regex(/^[0-9a-f]*$/, {
-    message:
-      "Hex-encoded data must only contain numerals and characters 'a' through 'f'",
+  .regex(/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+\/]{3}=)?$/, {
+    message: "Base64-encoded data is invalid.",
   });
-export type HexString = z.infer<typeof HexString>;
+export type Base64String = z.infer<typeof Base64String>;
 
 /**
  * Information describing the identity of the patient
@@ -87,14 +86,16 @@ export type TriageChecklist = z.infer<typeof TriageChecklist>;
  * Information to retrieve a binary object. We're going to use some sort of
  * content-addressable storage.
  */
-export const Blob = z.object({
-  sha256: HexString.length(64, {
-    message: "Hex-encoded SHA-256 hash must be exactly 64 characters long",
+export const Handle = z.object({
+  hash: Base64String.length(44, {
+    message: "Base64-encoded hash must be exactly 44 characters long",
   }),
 
-  // TODO: encryption key for the data with that hash.
+  key: Base64String.length(44, {
+    message: "Base64-encoded encryption key must be exactly 44 characters long",
+  }),
 });
-export type Blob = z.infer<typeof Blob>;
+export type Handle = Readonly<z.infer<typeof Handle>>;
 
 /**
  * Attachment role (CT Scan, etc)
@@ -114,7 +115,7 @@ export type MimeType = z.infer<typeof MimeType>;
 export const Attachment = z.object({
   role: AttachmentRole,
   mimeType: MimeType,
-  blob: Blob,
+  blob: Handle,
 });
 export type Attachment = z.infer<typeof Attachment>;
 
