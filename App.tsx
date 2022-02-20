@@ -92,7 +92,7 @@ export type NavParams = {
   CreateProfile: undefined;
   NotFound: undefined;
   RecieveProfile: undefined;
-  ViewProfile: {profile: Profile};
+  ViewProfile: { profile: Profile };
 };
 
 /**

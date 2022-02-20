@@ -7,8 +7,7 @@ export default function ViewProfileScreen({
   route,
   navigation,
 }: RootNavSubProps<"ViewProfile">) {
-
-  const profile:Profile = route.params.profile;
+  const profile: Profile = route.params.profile;
 
   return (
     <Stack>
