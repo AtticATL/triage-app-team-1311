@@ -18,6 +18,8 @@ import {
   StackScreenProps,
 } from "@react-navigation/stack";
 import { nativeBaseTheme } from "./lib/nativeBaseTheme";
+import RecieveProfileScreen from "./screens/RecieveProfileScreen";
+import ViewProfileScreen from "./screens/ViewProfileScreen";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -64,6 +66,20 @@ export function RootNav() {
           }}
           component={CreateProfileScreen}
         />
+        <Nav.Screen
+          name="RecieveProfile"
+          options={{
+            title: "Recieve Profile",
+          }}
+          component={RecieveProfileScreen}
+        />
+        <Nav.Screen
+          name="ViewProfile"
+          options={{
+            title: "View Profile",
+          }}
+          component={ViewProfileScreen}
+        />
       </Nav.Navigator>
       <StatusBar />
     </NavigationContainer>
@@ -74,6 +90,8 @@ export type NavParams = {
   Home: undefined;
   CreateProfile: undefined;
   NotFound: undefined;
+  RecieveProfile: undefined;
+  ViewProfile: undefined;
 };
 
 /**

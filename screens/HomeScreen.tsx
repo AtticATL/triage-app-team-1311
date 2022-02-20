@@ -35,12 +35,7 @@ export default function HomeScreen({ navigation }: RootNavSubProps<"Home">) {
             light
             title="Receive a Patient"
             icon="corner-left-down"
-            onPress={() =>
-              Alert.alert(
-                "Not Yet Implemented",
-                "Receiving a patient profile isn't implemented yet in the prototype."
-              )
-            }
+            onPress={() => navigation.navigate("RecieveProfile")}
           />
         </VStack>
 
