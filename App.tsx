@@ -20,6 +20,7 @@ import {
 import { nativeBaseTheme } from "./lib/nativeBaseTheme";
 import RecieveProfileScreen from "./screens/RecieveProfileScreen";
 import ViewProfileScreen from "./screens/ViewProfileScreen";
+import { Profile } from "./lib/profile";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -91,7 +92,7 @@ export type NavParams = {
   CreateProfile: undefined;
   NotFound: undefined;
   RecieveProfile: undefined;
-  ViewProfile: undefined;
+  ViewProfile: {profile: Profile};
 };
 
 /**

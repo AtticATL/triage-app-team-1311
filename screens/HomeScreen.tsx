@@ -16,6 +16,8 @@ import TileButton from "../components/TileButton";
 import { Profile } from "../lib/profile";
 import { listProfiles } from "../lib/profileStorage";
 import { Spinner, Text, Heading, VStack } from "native-base";
+import { NavigationContainer } from "@react-navigation/native";
+import { useLinkProps } from "@react-navigation/native";
 
 export default function HomeScreen({ navigation }: RootNavSubProps<"Home">) {
   return (
@@ -70,7 +72,7 @@ function ProfileLog() {
   return (
     <VStack space={3}>
       {profiles.map((p, i) => (
-        <ProfileCard key={i} profile={p} />
+        <ProfileCard key={i} profile={p}/>
       ))}
     </VStack>
   );
@@ -79,9 +81,11 @@ function ProfileLog() {
 function ProfileCard({ profile }: { profile: Profile }) {
   // TODO: obviously, remove clear-storage dev feature when names are tapped
 
+  const tapProps = useLinkProps({ to: {screen: "ViewProfile", params: { profile: profile}} });
+
   return (
     <VStack bg="white" p={4} rounded={4}>
-      <Pressable onPress={() => AsyncStorage.clear()}>
+      <Pressable {...tapProps} >
         <Text fontSize="lg">{profile.identity.name}</Text>
       </Pressable>
       <Text>
