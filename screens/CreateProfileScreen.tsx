@@ -47,6 +47,7 @@ import {
   Checkbox,
 } from "../components/Form";
 import BlobMedia from "../components/BlobMedia";
+import {encode} from "base-64";
 
 export default function CreateProfileScreen({
   navigation,
@@ -115,7 +116,8 @@ export default function CreateProfileScreen({
   const submit = useCallback(() => {
     // If, by any chance, something's still wrong, throw.
     storeProfile(Profile.Profile.parse(draftProfile));
-
+    let url = 'http://oi-triage-app/' + encode(JSON.stringify(draftProfile));
+    console.log(url);
     // Pop this view off the stack.
     navigation.pop();
   }, [draftProfile]);

@@ -7,6 +7,8 @@ import TileButton from "../components/TileButton";
 import { z } from "zod";
 import { setupURLPolyfill } from "react-native-url-polyfill";
 import { Feather } from "@expo/vector-icons";
+import {decode} from "base-64";
+
 
 setupURLPolyfill();
 
@@ -33,6 +35,8 @@ export default function RecieveProfileScreen({
       <Button
         onPress={() => {
           if (validURL) {
+            let profile = JSON.parse(decode(url.value.substring(21)));
+            console.log(profile);
             navigation.navigate("ViewProfile");
           }
         }}
