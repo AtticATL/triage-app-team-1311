@@ -1,17 +1,5 @@
 import * as React from "react";
-import {
-  Button,
-  Checkbox,
-  Flex,
-  Heading,
-  HStack,
-  Icon,
-  ScrollView,
-  Stack,
-  Text,
-  useColorModeValue,
-  VStack,
-} from "native-base";
+import { Button, Checkbox, CheckCircleIcon, ChevronDownIcon, Flex, HamburgerIcon, Heading, HStack, Icon, InfoIcon, InputRightAddon, ScrollView, Stack, Text, useColorModeValue, VStack, WarningIcon } from "native-base";
 import { NavSubProps as RootNavSubProps } from "../App";
 import { Profile } from "../lib/profile";
 import { CHECKLIST, QUESTIONS } from "../lib/triageQuestions";
@@ -53,7 +41,13 @@ export default function ViewProfileScreen({
           <Flex direction="row" mb="2.5" mt="2.5"></Flex>
 
           <VStack bg={bgProps} p={4} rounded={9}>
-            <Text fontSize="2xl">{"    "}History</Text>
+            <HStack>
+              <InfoIcon></InfoIcon>
+              <Text fontSize="2xl" ml={8}>
+                  History 
+              </Text>
+              <ChevronDownIcon ml="auto"/>
+            </HStack>  
           </VStack>
 
           <VStack p={5} space={5}>
@@ -75,7 +69,16 @@ export default function ViewProfileScreen({
           </VStack>
 
           <VStack bg={bgProps} p={4} rounded={9}>
-            <Text fontSize="2xl">{"    "}Triage Checklist</Text>
+          
+          <HStack>
+                <CheckCircleIcon></CheckCircleIcon> 
+                <Text fontSize="2xl" ml={8}>
+                    Triage Checklist 
+                </Text>
+                <ChevronDownIcon ml="auto"/>
+                
+          </HStack>
+ 
           </VStack>
 
           <VStack p={4} space={4}>
@@ -91,7 +94,13 @@ export default function ViewProfileScreen({
           </VStack>
 
           <VStack bg={bgProps} p={4} rounded={9}>
-            <Text fontSize="2xl">{"    "}Imagery</Text>
+            <HStack>
+                <HamburgerIcon></HamburgerIcon> 
+                <Text fontSize="2xl" ml={8}>
+                    Imagery 
+                </Text>
+                <ChevronDownIcon ml="auto"/>
+              </HStack>  
           </VStack>
 
           {profile.attachments.map((attachment) => (
@@ -108,8 +117,14 @@ export default function ViewProfileScreen({
           ))}
 
           <VStack bg={bgProps} p={4} rounded={9}>
-            <Text fontSize="2xl">{"    "}Other Notes</Text>
-          </VStack>
+            <HStack>
+              <WarningIcon></WarningIcon>
+              <Text fontSize="2xl" ml={8}>
+                  Other Notes 
+              </Text>
+              <ChevronDownIcon ml="auto"/>
+            </HStack> 
+          </VStack>  
 
           <VStack p={5} space={5}>
             <Text fontSize="lg">{profile.patientHistory.otherNotes}</Text>

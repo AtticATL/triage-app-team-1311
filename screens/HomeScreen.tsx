@@ -73,7 +73,7 @@ function ProfileLog() {
   return (
     <VStack space={3}>
       {profiles.map((p, i) => (
-        <ProfileCard key={i} profile={p}/>
+        <ProfileCard key={i} profile={p} />
       ))}
     </VStack>
   );
@@ -82,12 +82,14 @@ function ProfileLog() {
 function ProfileCard({ profile }: { profile: Profile }) {
   // TODO: obviously, remove clear-storage dev feature when names are tapped
 
-  const tapProps = useLinkProps({ to: {screen: "ViewProfile", params: { profile: profile}} });
+  const tapProps = useLinkProps({
+    to: { screen: "ViewProfile", params: { profile: profile } },
+  });
   const bgProps = useColorModeValue("white", "#121212");
 
   return (
     <VStack bg={bgProps} p={4} rounded={4}>
-      <Pressable {...tapProps} >
+      <Pressable {...tapProps}>
         <Text fontSize="lg">{profile.identity.name}</Text>
       </Pressable>
       <Text>

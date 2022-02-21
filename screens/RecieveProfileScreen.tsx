@@ -7,8 +7,7 @@ import TileButton from "../components/TileButton";
 import { z } from "zod";
 import { setupURLPolyfill } from "react-native-url-polyfill";
 import { Feather } from "@expo/vector-icons";
-import {decode} from "base-64";
-
+import { decode } from "base-64";
 
 setupURLPolyfill();
 
