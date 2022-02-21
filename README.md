@@ -45,6 +45,26 @@ Every time code is pushed, we run the following:
 
 ## Release Notes
 
+### Sprint 2: `v0.2.0`
+
+#### Features
+
+- After a profile has been completed, generate a URL containing that profile's data for transfer (#28)
+- View to enter a URL to view a profile somebody else has sent you (#28)
+- View to display the contents of a profile received from another user
+- System to encrypt and decrypt profile data, using keys stored on-device (#30, #29)
+- Added build, test, and tooling documentation to this `README.md`
+
+#### Bug Fixes
+
+- Fixed uselesss "receive profile" button (now: it's linked to the receive profile view)
+- Removed debug functionality where local storage would get erased when tapping on a profile name
+
+#### Known Issues
+
+- Cryptography operations are glacially slow, because React Native doesn't support the Web Crypto API
+- Profile attachments do not transfer alongside demographic information
+
 ### Sprint 1: `v0.1.0`
 
 #### Features
