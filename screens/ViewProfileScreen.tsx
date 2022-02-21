@@ -1,11 +1,24 @@
 import * as React from "react";
-import { Button, Checkbox, CheckCircleIcon, ChevronDownIcon, Flex, HamburgerIcon, Heading, HStack, Icon, InfoIcon, InputRightAddon, ScrollView, Stack, Text, useColorModeValue, VStack, WarningIcon } from "native-base";
+import {
+  Checkbox,
+  CheckCircleIcon,
+  ChevronDownIcon,
+  Flex,
+  HamburgerIcon,
+  Heading,
+  HStack,
+  InfoIcon,
+  ScrollView,
+  Text,
+  useColorModeValue,
+  VStack,
+  WarningIcon,
+} from "native-base";
 import { NavSubProps as RootNavSubProps } from "../App";
 import { Profile } from "../lib/profile";
 import { CHECKLIST, QUESTIONS } from "../lib/triageQuestions";
 import BlobMedia from "../components/BlobMedia";
 import { Entry } from "../components/Form";
-import { Feather } from "@expo/vector-icons";
 
 export default function ViewProfileScreen({
   route,
@@ -44,10 +57,10 @@ export default function ViewProfileScreen({
             <HStack>
               <InfoIcon></InfoIcon>
               <Text fontSize="2xl" ml={8}>
-                  History 
+                History
               </Text>
-              <ChevronDownIcon ml="auto"/>
-            </HStack>  
+              <ChevronDownIcon ml="auto" />
+            </HStack>
           </VStack>
 
           <VStack p={5} space={5}>
@@ -69,16 +82,13 @@ export default function ViewProfileScreen({
           </VStack>
 
           <VStack bg={bgProps} p={4} rounded={9}>
-          
-          <HStack>
-                <CheckCircleIcon></CheckCircleIcon> 
-                <Text fontSize="2xl" ml={8}>
-                    Triage Checklist 
-                </Text>
-                <ChevronDownIcon ml="auto"/>
-                
-          </HStack>
- 
+            <HStack>
+              <CheckCircleIcon></CheckCircleIcon>
+              <Text fontSize="2xl" ml={8}>
+                Triage Checklist
+              </Text>
+              <ChevronDownIcon ml="auto" />
+            </HStack>
           </VStack>
 
           <VStack p={4} space={4}>
@@ -95,12 +105,12 @@ export default function ViewProfileScreen({
 
           <VStack bg={bgProps} p={4} rounded={9}>
             <HStack>
-                <HamburgerIcon></HamburgerIcon> 
-                <Text fontSize="2xl" ml={8}>
-                    Imagery 
-                </Text>
-                <ChevronDownIcon ml="auto"/>
-              </HStack>  
+              <HamburgerIcon></HamburgerIcon>
+              <Text fontSize="2xl" ml={8}>
+                Imagery
+              </Text>
+              <ChevronDownIcon ml="auto" />
+            </HStack>
           </VStack>
 
           {profile.attachments.map((attachment) => (
@@ -120,11 +130,11 @@ export default function ViewProfileScreen({
             <HStack>
               <WarningIcon></WarningIcon>
               <Text fontSize="2xl" ml={8}>
-                  Other Notes 
+                Other Notes
               </Text>
-              <ChevronDownIcon ml="auto"/>
-            </HStack> 
-          </VStack>  
+              <ChevronDownIcon ml="auto" />
+            </HStack>
+          </VStack>
 
           <VStack p={5} space={5}>
             <Text fontSize="lg">{profile.patientHistory.otherNotes}</Text>
@@ -132,9 +142,5 @@ export default function ViewProfileScreen({
         </VStack>
       </VStack>
     </ScrollView>
-
-    // <Stack>
-    //   <Text>{JSON.stringify(profile, null, 2)}</Text>
-    // </Stack>
   );
 }
