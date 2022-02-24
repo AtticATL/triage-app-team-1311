@@ -8,7 +8,7 @@ import { encodeBase64 } from "../lib/storage/encoding";
 // @ts-ignore
 import { Image } from "native-base";
 
-export default function BlobMedia({ handle }: { handle: Handle }) {
+export function useMedia(handle: Handle): string | null {
   let [dataUri, setDataUri] = useState<string | null>(null);
 
   // Every time the handle changes, reload the image data from blob storage.
@@ -25,6 +25,12 @@ export default function BlobMedia({ handle }: { handle: Handle }) {
     }
     loadData();
   }, [handle]);
+
+  return dataUri;
+}
+
+export default function BlobMedia({ handle }: { handle: Handle }) {
+  const dataUri = useMedia(handle);
 
   if (dataUri == null) {
     return (

@@ -8,6 +8,7 @@ import {
   Heading,
   HStack,
   InfoIcon,
+  Pressable,
   ScrollView,
   Text,
   useColorModeValue,
@@ -19,6 +20,12 @@ import { Profile } from "../lib/profile";
 import { CHECKLIST, QUESTIONS } from "../lib/triageQuestions";
 import BlobMedia from "../components/BlobMedia";
 import { Entry } from "../components/Form";
+import {
+  Collapse,
+  CollapseHeader,
+  CollapseBody,
+  AccordionList,
+} from "accordion-collapse-react-native";
 
 export default function ViewProfileScreen({
   route,
@@ -52,6 +59,8 @@ export default function ViewProfileScreen({
           </HStack>
 
           <Flex direction="row" mb="2.5" mt="2.5"></Flex>
+
+          <Collapse></Collapse>
 
           <VStack bg={bgProps} p={4} rounded={9}>
             <HStack>
@@ -94,6 +103,7 @@ export default function ViewProfileScreen({
           <VStack p={4} space={4}>
             {CHECKLIST.map((id) => (
               <Checkbox
+                isReadOnly
                 colorScheme="dark"
                 value={id}
                 key={id}
@@ -115,16 +125,24 @@ export default function ViewProfileScreen({
           </VStack>
 
           {profile.attachments.map((attachment) => (
-            <Entry
-              space={2}
-              px={2}
-              py={2}
-              key={attachment.blob.hash}
-              rounded={20}
+            <Pressable
+              onPress={() =>
+                navigation.navigate("ViewImage", { attachment: attachment })
+              }
             >
-              <BlobMedia handle={attachment.blob} />
-              <HStack justifyContent="center" alignItems="center"></HStack>
-            </Entry>
+              <VStack>
+                <Entry
+                  space={2}
+                  px={2}
+                  py={2}
+                  key={attachment.blob.hash}
+                  rounded={20}
+                >
+                  <BlobMedia handle={attachment.blob} />
+                  <HStack justifyContent="center" alignItems="center"></HStack>
+                </Entry>
+              </VStack>
+            </Pressable>
           ))}
 
           <VStack bg={bgProps} p={4} rounded={9}>

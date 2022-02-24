@@ -25,6 +25,7 @@
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/native-stack": "^6.1.0",
     "@react-navigation/stack": "^6.0.11",
+    "accordion-collapse-react-native": "^1.1.0",
     "base64-arraybuffer": "^1.0.2",
     "expo": "~43.0.2",
     "expo-asset": "~8.4.3",
