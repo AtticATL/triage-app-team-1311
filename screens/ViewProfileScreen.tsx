@@ -54,8 +54,6 @@ export default function ViewProfileScreen({
 
           <Flex direction="row" mb="2.5" mt="2.5"></Flex>
 
-          <Collapse></Collapse>
-
           <VStack bg={bgProps} p={4} rounded={9}>
             <HStack>
               <InfoIcon></InfoIcon>
