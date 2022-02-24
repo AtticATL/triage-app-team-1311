@@ -20,12 +20,6 @@ import { Profile } from "../lib/profile";
 import { CHECKLIST, QUESTIONS } from "../lib/triageQuestions";
 import BlobMedia from "../components/BlobMedia";
 import { Entry } from "../components/Form";
-import {
-  Collapse,
-  CollapseHeader,
-  CollapseBody,
-  AccordionList,
-} from "accordion-collapse-react-native";
 
 export default function ViewProfileScreen({
   route,
