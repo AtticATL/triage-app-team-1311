@@ -3,12 +3,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavSubProps as RootNavSubProps } from "../App";
 import { Box, Center, HStack, Spinner, View, VStack } from "native-base";
 import { z } from "zod";
-import BlobMedia, { useMedia } from "../components/BlobMedia";
 import { Attachment } from "../lib/profile";
 import { Entry } from "../components/Form";
 import { Url } from "url";
 // @ts-ignore
 import { Image } from "native-base";
+import { useMedia } from "../hooks/useMedia";
 
 /**
  * The URL validator for the patient profile
