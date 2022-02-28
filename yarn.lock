@@ -3816,13 +3816,6 @@
     "mime-types" "~2.1.24"
     "negotiator" "0.6.2"
 
-"accordion-collapse-react-native@^1.1.0":
-  "integrity" "sha512-CjBUU6rFfdt7nvGWVio7eILf8K7SN0DyNiBe0m9uqGS6ize7A/Z4xTOmEEQ/LIvuQYVswM4b5TWldKgcE1NLMg=="
-  "resolved" "https://registry.npmjs.org/accordion-collapse-react-native/-/accordion-collapse-react-native-1.1.0.tgz"
-  "version" "1.1.0"
-  dependencies:
-    "lodash.get" "4.4.2"
-
 "acorn-globals@^6.0.0":
   "integrity" "sha512-ZQl7LOWaF5ePqqcX4hLuv/bLXYQNfNWw2c0/yX/TsPRKamzHcTGQnlCjHT3TsmkOUVEPS3crCxiPfdzE/Trlhg=="
   "resolved" "https://registry.npmjs.org/acorn-globals/-/acorn-globals-6.0.0.tgz"

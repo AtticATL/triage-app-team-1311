@@ -122,18 +122,15 @@ export default function ViewProfileScreen({
                 navigation.navigate("ViewImage", { attachment: attachment })
               }
             >
-              <VStack>
-                <Entry
-                  space={2}
-                  px={2}
-                  py={2}
-                  key={attachment.blob.hash}
-                  rounded={20}
-                >
-                  <BlobMedia handle={attachment.blob} />
-                  <HStack justifyContent="center" alignItems="center"></HStack>
-                </Entry>
-              </VStack>
+              <Entry
+                space={2}
+                px={2}
+                py={2}
+                key={attachment.blob.hash}
+                rounded={20}
+              >
+                <BlobMedia handle={attachment.blob} />
+              </Entry>
             </Pressable>
           ))}
 
