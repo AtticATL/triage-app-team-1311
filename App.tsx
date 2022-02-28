@@ -21,11 +21,12 @@ import {
 import { nativeBaseTheme } from "./lib/nativeBaseTheme";
 import RecieveProfileScreen from "./screens/RecieveProfileScreen";
 import ViewProfileScreen from "./screens/ViewProfileScreen";
-import { Profile } from "./lib/profile";
+import { Attachment, Profile } from "./lib/profile";
 
 import "text-encoding";
 import "react-native-url-polyfill/auto";
 import PolyfillCrypto from "./vendor/react-native-webview-crypto";
+import ViewImageScreen from "./screens/ViewImageScreen";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -89,6 +90,13 @@ export function RootNav() {
           }}
           component={ViewProfileScreen}
         />
+        <Nav.Screen
+          name="ViewImage"
+          options={{
+            title: "View Image",
+          }}
+          component={ViewImageScreen}
+        />
       </Nav.Navigator>
       <StatusBar />
     </NavigationContainer>
@@ -101,6 +109,7 @@ export type NavParams = {
   NotFound: undefined;
   RecieveProfile: undefined;
   ViewProfile: { profile: Profile };
+  ViewImage: { attachment: Attachment };
 };
 
 /**

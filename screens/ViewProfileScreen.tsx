@@ -8,6 +8,7 @@ import {
   Heading,
   HStack,
   InfoIcon,
+  Pressable,
   ScrollView,
   Text,
   useColorModeValue,
@@ -94,6 +95,7 @@ export default function ViewProfileScreen({
           <VStack p={4} space={4}>
             {CHECKLIST.map((id) => (
               <Checkbox
+                isReadOnly
                 colorScheme="dark"
                 value={id}
                 key={id}
@@ -115,16 +117,21 @@ export default function ViewProfileScreen({
           </VStack>
 
           {profile.attachments.map((attachment) => (
-            <Entry
-              space={2}
-              px={2}
-              py={2}
-              key={attachment.blob.hash}
-              rounded={20}
+            <Pressable
+              onPress={() =>
+                navigation.navigate("ViewImage", { attachment: attachment })
+              }
             >
-              <BlobMedia handle={attachment.blob} />
-              <HStack justifyContent="center" alignItems="center"></HStack>
-            </Entry>
+              <Entry
+                space={2}
+                px={2}
+                py={2}
+                key={attachment.blob.hash}
+                rounded={20}
+              >
+                <BlobMedia handle={attachment.blob} />
+              </Entry>
+            </Pressable>
           ))}
 
           <VStack bg={bgProps} p={4} rounded={9}>
