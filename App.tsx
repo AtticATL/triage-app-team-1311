@@ -22,11 +22,12 @@ import { nativeBaseTheme } from "./lib/nativeBaseTheme";
 import RecieveProfileScreen from "./screens/RecieveProfileScreen";
 import ViewProfileScreen from "./screens/ViewProfileScreen";
 import { Attachment, Profile } from "./lib/profile";
+import ViewImageScreen from "./screens/ViewImageScreen";
 
+// JS platform polyfills
 import "text-encoding";
 import "react-native-url-polyfill/auto";
-import PolyfillCrypto from "./vendor/react-native-webview-crypto";
-import ViewImageScreen from "./screens/ViewImageScreen";
+import "react-native-get-random-values";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -40,7 +41,6 @@ export default function App() {
 
   return (
     <>
-      <PolyfillCrypto />
       <NativeBaseProvider
         theme={nativeBaseTheme}
         colorModeManager={colorModeManager}

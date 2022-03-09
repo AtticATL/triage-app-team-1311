@@ -68,7 +68,7 @@ export type Paragraph = z.infer<typeof Paragraph>;
 export const PatientHistory = z.object({
   currentInfectionHistory: Paragraph,
   pastHistory: Paragraph,
-  otherNotes: Paragraph.optional(),
+  otherNotes: z.string().optional(),
 });
 export type PatientHistory = z.infer<typeof PatientHistory>;
 
@@ -87,13 +87,17 @@ export type TriageChecklist = z.infer<typeof TriageChecklist>;
  * content-addressable storage.
  */
 export const Handle = z.object({
-  hash: Base64String.length(44, {
-    message: "Base64-encoded hash must be exactly 44 characters long",
-  }),
+  id: z.string().uuid({ message: "Data must have a valid UUID" }),
 
-  key: Base64String.length(44, {
-    message: "Base64-encoded encryption key must be exactly 44 characters long",
-  }),
+  key: z.nullable(
+    // TODO: nullable to support stub encryption
+    Base64String.length(44, {
+      message:
+        "Base64-encoded encryption key must be exactly 44 characters long",
+    })
+  ),
+
+  // TODO(stub): Add integrity hash
 });
 export type Handle = Readonly<z.infer<typeof Handle>>;
 

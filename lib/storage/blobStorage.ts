@@ -1,5 +1,4 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Crypto from "expo-crypto";
 import { encodeBase64, decodeBase64 } from "./encoding";
 
 /*
@@ -13,25 +12,37 @@ import { encodeBase64, decodeBase64 } from "./encoding";
  *
  */
 
-/** Calculate the storage key for the given hash */
-const localStorageKey = (hashB64: string) =>
-  `@triage-app/encrypted-blob/${hashB64}`;
+/** Calculate the storage key for the given ID */
+const localStorageKey = (id: string) => `@triage-app/blob/id/${id}`;
 
-/** Stores a data blob in local storage. Returns that data's SHA256 hash (and storage key) */
-export async function put(hashB64: string, data: ArrayBuffer): Promise<void> {
+/** Stores a data blob in local storage. */
+export async function put(id: string, data: ArrayBuffer): Promise<void> {
+  console.log(`BlobStorage.put(id=${id})`);
+
+  // TODO(cloud): Upload to cloud storage
+
   // Store the data to AsyncStorage.
-  await AsyncStorage.setItem(localStorageKey(hashB64), encodeBase64(data));
+  await AsyncStorage.setItem(localStorageKey(id), encodeBase64(data));
 }
 
-/** Get a blob by its hash from local storage. Returns null if the key doesn't exist. */
-export async function get(hashB64: string): Promise<ArrayBuffer | null> {
-  const storageValue = await AsyncStorage.getItem(localStorageKey(hashB64));
+/** Get a blob by its unique ID from local storage. Returns null if the key doesn't exist. */
+export async function get(id: string): Promise<ArrayBuffer | null> {
+  const storageKey = localStorageKey(id);
+
+  console.log(`BlobStorage.get(id=${id}) key=${storageKey}`);
+  const storageValue = await AsyncStorage.getItem(storageKey);
+
+  // TODO(cloud): Download from cloud storage
 
   // If the value for this key doesn't exist, return null.
   if (storageValue == null) {
+    console.log(`BlobStorage.get(id=${id}) [does not exist]`);
     return null;
   }
 
   // We have the value. Decode the base64 string and return it.
-  return decodeBase64(storageValue);
+  console.log(`BlobStorage.get(id=${id}) decoding b64...`);
+  const decoded = decodeBase64(storageValue);
+  console.log(`BlobStorage.get(id=${id}) [done]`);
+  return decoded;
 }

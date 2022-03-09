@@ -1,47 +1,22 @@
-import {
-  encrypt,
-  decrypt,
-  generateKey,
-  hash,
-  exportKey,
-  importKey,
-} from "./crypto";
+import { encrypt, decrypt, generateKey, exportKey, importKey } from "./crypto";
 import { encodeJson, decodeJson, encodeBase64, decodeBase64 } from "./encoding";
+import { v4 as uuidv4 } from "uuid";
 import * as BlobStorage from "./blobStorage";
-
-// secret storage:
-//   PRIVATE datastore, explicitly shared through some other channel
-//   Secure storage (encrypted with lockscreen auth) on iOS/Android
-//   Session storage w/ expiration on web
-//   (data hash) -> (key data)
-//   () -> (device public key, device private key)  # maybe for later
-
-// blob storage:
-//   PUBLIC datastore, implicitly shared with anyone who wants it
-//   basically just a cache for Firebase Storage
-//   (data hash) -> (cyphertext)
-//   everything in here
-
-// put(data) -> keyID
-//    generate key
-//    store (keyID -> key) in key storage
-//    store (keyID -> encrypt(data, key)) in blob storage
-//    return keyID
-
-// get(keyID) -> data
-//    get key from key storage, cyphertext from data storage
-//    decrypt cyphertext with key
-//    return plaintext
 
 /** Alias denoting a base64 string */
 type Base64 = string;
 
+/** Alias denoting a Uuidv4 */
+type Uuid4 = string;
+
 export type Handle = Readonly<{
-  /** The hash of the data */
-  hash: Base64;
+  /** Unique uuidv4 for this item */
+  id: Uuid4;
 
   /** The key used to store the data in the cloud storage bucket */
-  key: Base64;
+  key: Base64 | null; // TODO(stub): remove nullability
+
+  // TODO(stub): Add integrity hash
 }>;
 
 /**
@@ -57,42 +32,32 @@ export type EarlyHandle = {
 };
 
 /**
- * Cache of blobs in storage, indexed by their hash.
- */
-const PLAINTEXT_BLOB_CACHE: Map<Base64, ArrayBuffer> = new Map();
-
-/**
  * Fetch and decrypt a data blob from storage.
  *
- * @param handle The handle to the data, with the hash of its contents, and the key used to decrypt it.
+ * @param handle The handle to the data, with the ID of its contents, and the key used to decrypt it.
  */
 export async function get(handle: Handle): Promise<ArrayBuffer | null> {
-  // Check to see if we have the data cached in memory.
-  const cached = PLAINTEXT_BLOB_CACHE.get(handle.hash);
-  if (cached != null) {
-    // Defensively copy the cached value, in case the caller mutates it.
-    const copy = new ArrayBuffer(cached.byteLength);
-    new Uint8Array(copy).set(new Uint8Array(cached)); // bytewise copy `cached` into `copy`
-
-    // Return from the cache
-    return copy;
-  }
+  console.log(`Storage.get(id=${handle.id}) key=${handle.key}`);
 
   // Decode and import the key
-  const key = await importKey(decodeBase64(handle.key));
+  const key = await importKey(handle.key ? decodeBase64(handle.key) : null); // TODO(stub)
 
   // Get the data, first attempting the local storage, then Cloud Storage.
-  let ciphertext = await BlobStorage.get(handle.hash);
+  console.log(`Storage.get(id=${handle.id}) loading ciphertext...`);
+  let ciphertext = await BlobStorage.get(handle.id);
 
-  // If the hash isn't in blob storage, the data doesn't exist.
+  // If the ID isn't in blob storage, the data doesn't exist.
   if (ciphertext == null) {
+    console.log(`Storage.get(id=${handle.id}) [does not exist]`);
     return null;
   }
 
   // Decrypt the data.
+  console.log(`Storage.get(id=${handle.id}) decrypt...`);
   const plaintext = await decrypt(ciphertext, key);
 
   // Return the plaintext data.
+  console.log(`Storage.get(id=${handle.id}) [done]`);
   return plaintext;
 }
 
@@ -102,16 +67,15 @@ export async function get(handle: Handle): Promise<ArrayBuffer | null> {
  * @param data The binary data to put in storage.
  */
 export async function put(data: ArrayBuffer): Promise<EarlyHandle> {
-  // Compute the hash of the data
-  const dataHash = await hash(data);
-  const hashB64 = encodeBase64(dataHash);
+  // Generate an ID for the data
+  const id = uuidv4();
 
-  // Insert the data into the inmemory plaintext cache
-  PLAINTEXT_BLOB_CACHE.set(hashB64, copyBuf(data));
+  console.log(`Storage.put() generated id=${id}`);
 
   // Generate a key to encrypt the data
   const key = await generateKey();
-  const keyB64 = encodeBase64(await exportKey(key));
+  const exportedKey = await exportKey(key);
+  const keyB64 = exportedKey ? encodeBase64(exportedKey) : null; // TODO(stub)
 
   // We can perform the actual encryption and upload in a background task.
   // The plaintext is already cached in memory.
@@ -121,13 +85,13 @@ export async function put(data: ArrayBuffer): Promise<EarlyHandle> {
     const ciphertext = await encrypt(data, key);
 
     // Store in blob storage.
-    await BlobStorage.put(hashB64, ciphertext);
+    await BlobStorage.put(id, ciphertext);
   };
 
   // Return the handle immediately, without waiting for the encryption, storage, and upload to complete.
   const handle: Handle = Object.freeze({
-    hash: hashB64,
-    key: encodeBase64(await exportKey(key)),
+    id,
+    key: keyB64,
   });
 
   return { handle, waitForDurableStorage: encryptAndUpload() };
@@ -136,7 +100,7 @@ export async function put(data: ArrayBuffer): Promise<EarlyHandle> {
 /**
  * Fetch, decrypt, and JSON-decode an object from storage.
  *
- * @param handle The handle to the data, with the hash of its contents, and the key used to decrypt it.
+ * @param handle The handle to the data, with the id of its contents, and the key used to decrypt it.
  */
 export async function getJson(handle: Handle): Promise<any | null> {
   let buf = await get(handle);

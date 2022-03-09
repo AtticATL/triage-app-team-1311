@@ -22,7 +22,6 @@ import {
 } from "native-base";
 import { z } from "zod";
 import * as ImagePicker from "expo-image-picker";
-import * as Crypto from "expo-crypto";
 import { Feather } from "@expo/vector-icons";
 
 import { NavSubProps as RootNavSubProps } from "../App";
@@ -79,10 +78,12 @@ export default function CreateProfileScreen({
   >([]);
 
   const attach = useCallback(async () => {
+    console.log("[upload] present dialog");
+
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      quality: 1,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0 /* crunch the daylights out of it with compression */,
       base64: true, // Give us the base64-encoded binary data here
     });
 
@@ -90,20 +91,20 @@ export default function CreateProfileScreen({
     if (result.cancelled) {
       return;
     }
+    console.log(
+      `[upload] got image attachment, ${result!.base64!.length} chars of b64`
+    );
 
-    // Store the image.
+    // Decode the image from base64
     if (!result.base64) {
       throw new TypeError("base64 image data not returned from library picker");
     }
-    const buf = decodeBase64(result.base64);
-    let earlyHandle = await Storage.put(buf);
 
-    // If we've already got this hash, don't double-attach it.
-    if (
-      uploads.some((u) => u.attachment.blob.hash == earlyHandle.handle.hash)
-    ) {
-      return;
-    }
+    console.log("[upload] decode image base64");
+    const buf = decodeBase64(result.base64);
+
+    console.log("[upload] call Storage.put");
+    let earlyHandle = await Storage.put(buf);
 
     setUploads((as) => [
       ...as,
@@ -261,7 +262,7 @@ export default function CreateProfileScreen({
           </VStack>
 
           {uploads.map(({ attachment, earlyHandle }) => (
-            <Entry space={2} px={2} py={2} key={attachment.blob.hash}>
+            <Entry space={2} px={2} py={2} key={attachment.blob.id}>
               <BlobMedia handle={attachment.blob} />
               <HStack justifyContent="center" alignItems="center">
                 <Button
@@ -272,7 +273,7 @@ export default function CreateProfileScreen({
                   onPress={() => {
                     setUploads((us) =>
                       us.filter(
-                        (u) => u.attachment.blob.hash != attachment.blob.hash
+                        (u) => u.attachment.blob.id != attachment.blob.id
                       )
                     );
                   }}
