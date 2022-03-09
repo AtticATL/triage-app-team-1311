@@ -2,14 +2,7 @@
 // @ts-ignore
 window.crypto = require("crypto").webcrypto; // polyfill
 
-import {
-  importKey,
-  exportKey,
-  generateKey,
-  encrypt,
-  decrypt,
-  hash,
-} from "./crypto";
+import { importKey, exportKey, generateKey, encrypt, decrypt } from "./crypto";
 import { encodeText, decodeText, encodeBase64, decodeBase64 } from "./encoding";
 
 it("generates a key", async () => {
@@ -26,19 +19,17 @@ it("encrypts and decrypts a message correctly", async () => {
   const ciphertext = await encrypt(encodeText(message), key);
 
   // Export and re-import the key
-  const exportedKey: string = encodeBase64(await exportKey(key));
-  const importedKey = await importKey(decodeBase64(exportedKey));
+  let exportedKey = await exportKey(key);
+  if (exportedKey != null) {
+    // TODO(stub): remove this
+    // Roundtrip through base64
+    exportedKey = decodeBase64(encodeBase64(exportedKey));
+  }
+  const importedKey = await importKey(exportedKey);
 
   // Decrypt the message
   const plaintext = await decrypt(ciphertext, importedKey);
 
   // Check that this worked
   expect(decodeText(plaintext)).toEqual(message);
-});
-
-it("computes hashes", async () => {
-  let message = "message to hash";
-  let hashBuf = await hash(encodeText(message));
-  let base64 = encodeBase64(hashBuf);
-  expect(base64).not.toHaveLength(0);
 });

@@ -33,9 +33,9 @@ export function decodeText(buf: BufferSource): string {
  *
  * @param json The Object to encode
  */
-export function encodeJson(json: any): ArrayBuffer {
+export function encodeJson(json: unknown): ArrayBuffer {
   let text = JSON.stringify(json);
-  return encodeText(json);
+  return encodeText(text);
 }
 
 /**
@@ -43,7 +43,7 @@ export function encodeJson(json: any): ArrayBuffer {
  *
  * @param buf The buffer to decode
  */
-export function decodeJson(buf: BufferSource): any {
+export function decodeJson(buf: BufferSource): unknown {
   let text = decodeText(buf);
   return JSON.parse(text);
 }

@@ -11,7 +11,7 @@ export function useMedia(handle: Handle): string | null {
     async function loadData() {
       let data = await get(handle);
       if (data == null) {
-        throw new Error(`Could not load image with hash: ${handle.hash}`);
+        throw new Error(`Could not load image with id: ${handle.id}`);
       }
 
       let b64 = encodeBase64(data);

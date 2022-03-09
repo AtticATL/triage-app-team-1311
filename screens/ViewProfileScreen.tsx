@@ -126,7 +126,7 @@ export default function ViewProfileScreen({
                 space={2}
                 px={2}
                 py={2}
-                key={attachment.blob.hash}
+                key={attachment.blob.id}
                 rounded={20}
               >
                 <BlobMedia handle={attachment.blob} />

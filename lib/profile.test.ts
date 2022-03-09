@@ -42,7 +42,6 @@ describe("patient sex", () => {
 
 describe("b64-encoded data", () => {
   it("accepts valid data", () => {
-    expect(Profile.Base64String.parse(exampleHandle.hash));
     expect(Profile.Base64String.parse(exampleHandle.key));
   });
 
@@ -130,7 +129,7 @@ describe("triage checklist", () => {
 });
 
 const exampleHandle = {
-  hash: "2vCZPKVFuv3/YRtgvp/H1RooMM1ZXvUut8vxNlXHV/M=",
+  id: "b928b62f-b6dd-4146-8d2e-d06456a558da",
   key: "tXCdeLc4JOxas816eQisjwexlF1jo/Bl3k1ApNOzGAk=",
 };
 
@@ -149,13 +148,6 @@ describe("attachment storage", () => {
   });
 
   it("rejects invalid data", () => {
-    expect(() => {
-      Profile.Attachment.parse({
-        role: "bad invalid role",
-        mimeType: "image/jpeg",
-        blob: { ...exampleHandle, hash: "nope" },
-      });
-    }).toThrow();
     expect(() => {
       Profile.Attachment.parse({
         role: "Other",
