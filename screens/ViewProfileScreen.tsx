@@ -118,17 +118,12 @@ export default function ViewProfileScreen({
 
           {profile.attachments.map((attachment) => (
             <Pressable
+              key={attachment.blob.id}
               onPress={() =>
                 navigation.navigate("ViewImage", { attachment: attachment })
               }
             >
-              <Entry
-                space={2}
-                px={2}
-                py={2}
-                key={attachment.blob.id}
-                rounded={20}
-              >
+              <Entry space={2} px={2} py={2} rounded={20}>
                 <BlobMedia handle={attachment.blob} />
               </Entry>
             </Pressable>
