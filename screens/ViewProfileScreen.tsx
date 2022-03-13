@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+  Alert,
   Checkbox,
   CheckCircleIcon,
   ChevronDownIcon,
@@ -22,6 +23,28 @@ import { CHECKLIST, QUESTIONS } from "../lib/triageQuestions";
 import BlobMedia from "../components/BlobMedia";
 import { Entry } from "../components/Form";
 import { REGIONAREAS, REGIONS } from "../lib/injuryRegions";
+
+const isUrgent = (profile: Profile) => {
+  var numInfectedRegions: number = 0;
+  var numTriageIssues: number = 0;
+
+  Object.values(profile.infectionRegions).forEach((v) => {
+    if (v) {
+      numInfectedRegions++;
+    }
+  });
+  Object.values(profile.triageChecklist).forEach((v) => {
+    if (v) {
+      numTriageIssues++;
+    }
+  });
+
+  if (numInfectedRegions > 1 || numTriageIssues > 1) {
+    return true;
+  }
+
+  return false;
+};
 
 export default function ViewProfileScreen({
   route,
@@ -54,7 +77,27 @@ export default function ViewProfileScreen({
             <Text fontSize="lg"> {profile.identity.sex}</Text>
           </HStack>
 
-          <Flex direction="row" mb="2.5" mt="2.5"></Flex>
+          {isUrgent(profile) && (
+            <Alert
+              variant="solid"
+              status="warning"
+              colorScheme="warning"
+              alignItems="stretch"
+              pl={4}
+            >
+              <HStack space={3}>
+                <Alert.Icon pt={6} />
+                <Text fontSize="lg" color="white" pr={10}>
+                  NOTICE: This patient is reported to have a severe/multiple
+                  infection(s).
+                </Text>
+              </HStack>
+            </Alert>
+          )}
+
+          {!isUrgent(profile) && (
+            <Flex direction="row" mb="2.5" mt="2.5"></Flex>
+          )}
 
           <VStack bg={bgProps} p={4} rounded={9}>
             <HStack>
