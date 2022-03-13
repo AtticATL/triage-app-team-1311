@@ -179,6 +179,7 @@ describe("patient profile", () => {
         otherNotes: "other stuff",
       },
       triageChecklist: { test: false },
+      infectionRegions: { test: false },
       attachments: [
         {
           role: "Other",

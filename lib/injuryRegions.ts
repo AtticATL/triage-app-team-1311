@@ -11,6 +11,7 @@ export type Section = z.infer<typeof Section>;
  * List of different regions
  */
 export const REGIONAREAS = Object.freeze({
+  test: { text: "Test injury region" },
   upperRight: { text: "Upper jaw right region" },
   upperLeft: { text: "Upper jaw left region" },
   lowerRight: { text: "Lower jaw right region" },
@@ -32,7 +33,7 @@ export const REGIONS: Array<keyof typeof REGIONAREAS> = [
 ];
 
 /**
- * A default-false record for every region in QUESTION_KEYS
+ * A default-false record for every region in REGIONS
  */
 export const FALSE_REGION_SECTIONS = Object.freeze(
   REGIONS.map((k) => ({
