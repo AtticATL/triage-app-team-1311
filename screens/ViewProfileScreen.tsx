@@ -1,6 +1,7 @@
 import * as React from "react";
 import {
   Alert,
+  Button,
   Checkbox,
   CheckCircleIcon,
   ChevronDownIcon,
@@ -8,6 +9,7 @@ import {
   HamburgerIcon,
   Heading,
   HStack,
+  Icon,
   InfoIcon,
   Pressable,
   ScrollView,
@@ -23,6 +25,7 @@ import { CHECKLIST, QUESTIONS } from "../lib/triageQuestions";
 import BlobMedia from "../components/BlobMedia";
 import { Entry } from "../components/Form";
 import { REGIONAREAS, REGIONS } from "../lib/injuryRegions";
+import { Feather } from "@expo/vector-icons";
 
 export default function ViewProfileScreen({
   route,
@@ -213,6 +216,18 @@ export default function ViewProfileScreen({
           <VStack p={5} space={5}>
             <Text fontSize="lg">{profile.patientHistory.otherNotes}</Text>
           </VStack>
+          <Button
+            onPress={() => {
+                navigation.navigate("PrintScreen", {profile});
+              }
+            }
+            py={8}
+            size="lg"
+            colorScheme="dark"
+            rightIcon={<Icon as={Feather} name="printer" size="sm" />}
+          >
+            Print
+          </Button>
         </VStack>
       </VStack>
     </ScrollView>
