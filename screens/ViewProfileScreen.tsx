@@ -24,34 +24,36 @@ import BlobMedia from "../components/BlobMedia";
 import { Entry } from "../components/Form";
 import { REGIONAREAS, REGIONS } from "../lib/injuryRegions";
 
-const isUrgent = (profile: Profile) => {
-  var numInfectedRegions: number = 0;
-  var numTriageIssues: number = 0;
-
-  Object.values(profile.infectionRegions).forEach((v) => {
-    if (v) {
-      numInfectedRegions++;
-    }
-  });
-  Object.values(profile.triageChecklist).forEach((v) => {
-    if (v) {
-      numTriageIssues++;
-    }
-  });
-
-  if (numInfectedRegions > 1 || numTriageIssues > 1) {
-    return true;
-  }
-
-  return false;
-};
-
 export default function ViewProfileScreen({
   route,
   navigation,
 }: RootNavSubProps<"ViewProfile">) {
   const profile: Profile = route.params.profile;
+
+  // Figure out how many regions and triage entries are checked off,
+  // and based on that whether the patient is urgent
+  var nRegions: number = 0;
+  Object.values(profile.infectionRegions).forEach((region) => {
+    if (region) {
+      nRegions++;
+    }
+  });
+  const urgentDueToRegions = nRegions > 1;
+  
+  var nTriage: number = 0;
+  Object.values(profile.triageChecklist).forEach((triageItem) => {
+    if (triageItem) {
+      nTriage++;
+    }
+  });
+  const urgentDueToTriage =  nTriage > 1;
+
+  // Color values to conditionally set the urgent area
+  const warningColor = "#ea580c";
   const bgProps = useColorModeValue("#DEDEDE", "#121212");
+  const textProps = useColorModeValue("#000000", "#FFFFFF");
+  const triageColorSwitch = () => {return urgentDueToTriage ? "#FFFFFF" : textProps};
+  const regionColorSwitch = () => {return urgentDueToRegions ? "#FFFFFF" : textProps};
 
   return (
     <ScrollView>
@@ -77,7 +79,7 @@ export default function ViewProfileScreen({
             <Text fontSize="lg"> {profile.identity.sex}</Text>
           </HStack>
 
-          {isUrgent(profile) && (
+          {(urgentDueToRegions || urgentDueToTriage) && (
             <Alert
               variant="solid"
               status="warning"
@@ -95,7 +97,7 @@ export default function ViewProfileScreen({
             </Alert>
           )}
 
-          {!isUrgent(profile) && (
+          {!(urgentDueToRegions || urgentDueToTriage) && (
             <Flex direction="row" mb="2.5" mt="2.5"></Flex>
           )}
 
@@ -127,13 +129,13 @@ export default function ViewProfileScreen({
             </VStack>
           </VStack>
 
-          <VStack bg={bgProps} p={4} rounded={9}>
+          <VStack bg={urgentDueToTriage ? warningColor : bgProps} p={4} rounded={9}>
             <HStack>
-              <CheckCircleIcon></CheckCircleIcon>
-              <Text fontSize="2xl" ml={8}>
+              <CheckCircleIcon color={triageColorSwitch()}></CheckCircleIcon>
+              <Text fontSize="2xl" color={triageColorSwitch()} ml={8}>
                 Triage Checklist
               </Text>
-              <ChevronDownIcon ml="auto" />
+              <ChevronDownIcon color={triageColorSwitch()} ml="auto" />
             </HStack>
           </VStack>
 
@@ -151,13 +153,13 @@ export default function ViewProfileScreen({
             ))}
           </VStack>
 
-          <VStack bg={bgProps} p={4} rounded={9}>
+          <VStack bg={urgentDueToRegions ? warningColor :bgProps} p={4} rounded={9}>
             <HStack>
-              <WarningTwoIcon></WarningTwoIcon>
-              <Text fontSize="2xl" ml={8}>
+              <WarningTwoIcon color={regionColorSwitch()}></WarningTwoIcon>
+              <Text fontSize="2xl" color={regionColorSwitch()} ml={8}>
                 Injury Regions
               </Text>
-              <ChevronDownIcon ml="auto" />
+              <ChevronDownIcon color={regionColorSwitch()} ml="auto" />
             </HStack>
           </VStack>
 
