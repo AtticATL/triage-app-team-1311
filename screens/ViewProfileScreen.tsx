@@ -14,12 +14,14 @@ import {
   useColorModeValue,
   VStack,
   WarningIcon,
+  WarningTwoIcon,
 } from "native-base";
 import { NavSubProps as RootNavSubProps } from "../App";
 import { Profile } from "../lib/profile";
 import { CHECKLIST, QUESTIONS } from "../lib/triageQuestions";
 import BlobMedia from "../components/BlobMedia";
 import { Entry } from "../components/Form";
+import { REGIONAREAS, REGIONS } from "../lib/injuryRegions";
 
 export default function ViewProfileScreen({
   route,
@@ -102,6 +104,30 @@ export default function ViewProfileScreen({
                 isChecked={profile.triageChecklist[id]}
               >
                 <Text fontSize="md">{"  " + QUESTIONS[id].text}</Text>
+              </Checkbox>
+            ))}
+          </VStack>
+
+          <VStack bg={bgProps} p={4} rounded={9}>
+            <HStack>
+              <WarningTwoIcon></WarningTwoIcon>
+              <Text fontSize="2xl" ml={8}>
+                Injury Regions
+              </Text>
+              <ChevronDownIcon ml="auto" />
+            </HStack>
+          </VStack>
+
+          <VStack p={4} space={4}>
+            {REGIONS.map((id) => (
+              <Checkbox
+                isReadOnly
+                colorScheme="dark"
+                value={id}
+                key={id}
+                isChecked={profile.infectionRegions[id]}
+              >
+                <Text fontSize="md">{"  " + REGIONAREAS[id].text}</Text>
               </Checkbox>
             ))}
           </VStack>

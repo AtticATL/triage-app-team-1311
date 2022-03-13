@@ -1,4 +1,5 @@
-import { z } from "zod"; // data validation library
+import { boolean, z } from "zod"; // data validation library
+import { REGIONAREAS, REGIONS } from "./injuryRegions";
 import { Question, QUESTIONS } from "./triageQuestions";
 
 const currentYear = new Date().getFullYear();
@@ -83,6 +84,16 @@ export const TriageChecklist = z
 export type TriageChecklist = z.infer<typeof TriageChecklist>;
 
 /**
+ * Triage checklist information
+ */
+export const InfectionRegions = z
+  .record(z.boolean())
+  .refine((r) => Object.keys(r).every((k) => REGIONAREAS.hasOwnProperty(k)), {
+    message: "Infection regions contain IDs of regions we aren't aware of",
+  });
+export type InfectionRegions = z.infer<typeof InfectionRegions>;
+
+/**
  * Information to retrieve a binary object. We're going to use some sort of
  * content-addressable storage.
  */
@@ -130,6 +141,7 @@ export const Profile = z.object({
   identity: Identity,
   patientHistory: PatientHistory,
   triageChecklist: TriageChecklist,
+  infectionRegions: InfectionRegions,
   attachments: z.array(Attachment),
 });
 export type Profile = z.infer<typeof Profile>;

@@ -53,6 +53,11 @@ import {
   Checkbox,
 } from "../components/Form";
 import BlobMedia from "../components/BlobMedia";
+import {
+  FALSE_REGION_SECTIONS,
+  REGIONAREAS,
+  REGIONS,
+} from "../lib/injuryRegions";
 
 export default function CreateProfileScreen({
   navigation,
@@ -71,6 +76,11 @@ export default function CreateProfileScreen({
   // Track the true/false answers to triage questions
   let [answers, setAnswers] =
     useState<Record<string, boolean>>(EMPTY_ANSWER_RECORD);
+
+  // Track the true/false regions to injury regions
+  let [regions, setRegions] = useState<Record<string, boolean>>(
+    FALSE_REGION_SECTIONS
+  );
 
   // Store attachments
   let [uploads, setUploads] = useState<
@@ -151,6 +161,7 @@ export default function CreateProfileScreen({
       sex: sex.value,
     },
     triageChecklist: answers,
+    infectionRegions: regions,
     patientHistory: {
       currentInfectionHistory: currentInfectionHistory.value,
       pastHistory: pastHistory.value,
@@ -244,6 +255,25 @@ export default function CreateProfileScreen({
                 value={answers[id]}
                 label={QUESTIONS[id].text}
                 onChange={(v) => setAnswers((a) => ({ ...a, [id]: v }))}
+              />
+            ))}
+          </Entry>
+        </VStack>
+
+        <VStack space={4}>
+          <Heading>Infection Regions</Heading>
+          <Text>
+            Designate the affected regions of the face for the patient's
+            odontogenic injury.
+          </Text>
+
+          <Entry space={4}>
+            {REGIONS.map((id) => (
+              <Checkbox
+                key={id}
+                value={regions[id]}
+                label={REGIONAREAS[id].text}
+                onChange={(v) => setRegions((a) => ({ ...a, [id]: v }))}
               />
             ))}
           </Entry>
