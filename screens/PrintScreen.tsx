@@ -4,9 +4,9 @@ import * as Print from 'expo-print';
 import { shareAsync } from 'expo-sharing';
 import { Profile } from '../lib/profile';
 import { NavSubProps as RootNavSubProps } from "../App";
-import { CHECKLIST } from '../lib/triageQuestions';
-import { Checkbox } from 'native-base';
-
+import { QUESTIONS } from '../lib/triageQuestions';
+import { REGIONAREAS } from '../lib/injuryRegions';
+import { useMedia } from '../hooks/useMedia';
 
 
 export default function PrintScreen({
@@ -21,14 +21,33 @@ export default function PrintScreen({
       html,
     });
   }
-  console.log(profile)
-
   var age = new Date().getFullYear() - profile.identity.birthYear;
+  
+  var triageChecklistString : String = "";
+  Object.keys(profile.triageChecklist).forEach(entry => {
+    triageChecklistString += '<tr style="font-size: 10px; font-family: Helvetica Neue; font-weight: normal;"> <td>' + QUESTIONS[entry].text + "</td>";
+    if (profile.triageChecklist[entry]) {
+      triageChecklistString += "<td>[x]</td>\n";
+    } else {
+      triageChecklistString += "<td>[_]</td>\n";
+    }
+  });
+  var infectionRegionsString : String = "";
+  Object.keys(profile.infectionRegions).forEach(entry => {
+    infectionRegionsString += '<tr style="font-size: 10px; font-family: Helvetica Neue; font-weight: normal;"> <td>' + REGIONAREAS[entry].text + "</td>";
+    if (profile.infectionRegions[entry]) {
+      infectionRegionsString += "<td>[x]</td>\n";
+    } else {
+      infectionRegionsString += "<td>[_]</td>\n";
+    }
+  });
 
-  console.log(Object.keys(profile.triageChecklist))
 
+  var imgHTMLString: String = "";
 
-
+  profile.attachments.forEach(image => {
+    imgHTMLString += '<img width="250" style="margin-left: 15;" src="'+ useMedia(image.blob) +'">';
+  });
 
 
   const html = `
@@ -66,12 +85,20 @@ export default function PrintScreen({
                     <h2 style="font-size: 20px; font-family: Helvetica Neue; font-weight: normal;">
                         <u>Triage Checklist</u>
                     </h2>
-                    
 
+                    <table style="width=100%;">
+                        `+ triageChecklistString +`
+                    </table>
+                    <h2 style="font-size: 20px; font-family: Helvetica Neue; font-weight: normal;">
+                        <u>Infection Regions</u>
+                    </h2>
+
+                    <table style="width=100%;">
+                        `+ infectionRegionsString +`
+                    </table>
+                    
                 </div>
-                <div class="column">
-                    oof
-                </div>
+                `+imgHTMLString+`
             </div>
             
         </body>
@@ -87,6 +114,10 @@ export default function PrintScreen({
         }    
         .border-right {
             border-right: 0.5px solid black;
+        }
+
+        body {
+          padding: 5%;
         }
         </style>
 
