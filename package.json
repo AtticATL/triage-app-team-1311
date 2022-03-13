@@ -39,6 +39,8 @@
     "expo-font": "~10.0.3",
     "expo-image-picker": "~11.0.3",
     "expo-linking": "~2.4.2",
+    "expo-print": "^11.1.1",
+    "expo-sharing": "^10.1.1",
     "expo-splash-screen": "~0.13.5",
     "expo-status-bar": "~1.1.0",
     "native-base": "^3.3.4",
