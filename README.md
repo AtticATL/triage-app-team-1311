@@ -45,6 +45,24 @@ Every time code is pushed, we run the following:
 
 ## Release Notes
 
+### Sprint 3: `v0.3.0`
+
+#### Features
+
+- Added printing functionality for patient profiles
+- Automatic collapse of patient views added
+- Included section to direct area of odontegenic injury
+- Added highligting to designate urgent patient notices
+
+#### Bug Fixes
+
+- Fixed clicking on an image not correctly directing to the image view 
+- Profile attatchments now transfer alongside demographic information
+
+#### Known Issues
+
+- Cryptography operations are glacially slow, because React Native doesn't support the Web Crypto API
+
 ### Sprint 2: `v0.2.0`
 
 #### Features
