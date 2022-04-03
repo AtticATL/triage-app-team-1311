@@ -26,7 +26,7 @@ export default function PrintScreen({
   Object.keys(profile.triageChecklist).forEach((entry) => {
     triageChecklistString +=
       '<tr style="font-size: 10px; font-family: Helvetica Neue; font-weight: normal;"> <td>' +
-      QUESTIONS[entry].text +
+      QUESTIONS[entry as keyof typeof QUESTIONS].text +
       "</td>";
     if (profile.triageChecklist[entry]) {
       triageChecklistString += "<td>[x]</td>\n";
@@ -38,7 +38,7 @@ export default function PrintScreen({
   Object.keys(profile.infectionRegions).forEach((entry) => {
     infectionRegionsString +=
       '<tr style="font-size: 10px; font-family: Helvetica Neue; font-weight: normal;"> <td>' +
-      REGIONAREAS[entry].text +
+      REGIONAREAS[entry as keyof typeof REGIONAREAS].text +
       "</td>";
     if (profile.infectionRegions[entry]) {
       infectionRegionsString += "<td>[x]</td>\n";

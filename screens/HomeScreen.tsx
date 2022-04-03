@@ -93,7 +93,7 @@ function ProfileCard({ profile }: { profile: Profile }) {
   return (
     <VStack bg={bgProps} p={4} rounded={4}>
       <Pressable
-        onLongPress={(event) => openContextMenu(event, profile)}
+        onLongPress={() => openContextMenu(profile)}
         {...tapProps}
       >
         <Text fontSize="lg">{profile.identity.name}</Text>
@@ -106,7 +106,7 @@ function ProfileCard({ profile }: { profile: Profile }) {
   );
 }
 
-const openContextMenu = (event, profile) => {
+const openContextMenu = (profile: Profile) => {
   ActionSheetIOS.showActionSheetWithOptions(
     {
       options: ["Cancel", "Delete User"],
