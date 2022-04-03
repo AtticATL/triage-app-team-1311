@@ -42,21 +42,25 @@ export default function ViewProfileScreen({
     }
   });
   const urgentDueToRegions = nRegions > 1;
-  
+
   var nTriage: number = 0;
   Object.values(profile.triageChecklist).forEach((triageItem) => {
     if (triageItem) {
       nTriage++;
     }
   });
-  const urgentDueToTriage =  nTriage > 1;
+  const urgentDueToTriage = nTriage > 1;
 
   // Color values to conditionally set the urgent area
   const warningColor = "#ea580c";
   const bgProps = useColorModeValue("#DEDEDE", "#121212");
   const textProps = useColorModeValue("#000000", "#FFFFFF");
-  const triageColorSwitch = () => {return urgentDueToTriage ? "#FFFFFF" : textProps};
-  const regionColorSwitch = () => {return urgentDueToRegions ? "#FFFFFF" : textProps};
+  const triageColorSwitch = () => {
+    return urgentDueToTriage ? "#FFFFFF" : textProps;
+  };
+  const regionColorSwitch = () => {
+    return urgentDueToRegions ? "#FFFFFF" : textProps;
+  };
 
   return (
     <ScrollView>
@@ -132,7 +136,11 @@ export default function ViewProfileScreen({
             </VStack>
           </VStack>
 
-          <VStack bg={urgentDueToTriage ? warningColor : bgProps} p={4} rounded={9}>
+          <VStack
+            bg={urgentDueToTriage ? warningColor : bgProps}
+            p={4}
+            rounded={9}
+          >
             <HStack>
               <CheckCircleIcon color={triageColorSwitch()}></CheckCircleIcon>
               <Text fontSize="2xl" color={triageColorSwitch()} ml={8}>
@@ -156,7 +164,11 @@ export default function ViewProfileScreen({
             ))}
           </VStack>
 
-          <VStack bg={urgentDueToRegions ? warningColor :bgProps} p={4} rounded={9}>
+          <VStack
+            bg={urgentDueToRegions ? warningColor : bgProps}
+            p={4}
+            rounded={9}
+          >
             <HStack>
               <WarningTwoIcon color={regionColorSwitch()}></WarningTwoIcon>
               <Text fontSize="2xl" color={regionColorSwitch()} ml={8}>
@@ -218,9 +230,8 @@ export default function ViewProfileScreen({
           </VStack>
           <Button
             onPress={() => {
-                navigation.navigate("PrintScreen", {profile});
-              }
-            }
+              navigation.navigate("PrintScreen", { profile });
+            }}
             py={8}
             size="lg"
             colorScheme="dark"

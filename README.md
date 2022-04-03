@@ -45,6 +45,16 @@ Every time code is pushed, we run the following:
 
 ## Release Notes
 
+### Sprint 3: `v0.4.0`
+
+#### Features
+
+- Added delete profile functionality for patient profiles
+
+#### Bug Fixes
+
+#### Known Issues
+
 ### Sprint 3: `v0.3.0`
 
 #### Features
@@ -56,7 +66,7 @@ Every time code is pushed, we run the following:
 
 #### Bug Fixes
 
-- Fixed clicking on an image not correctly directing to the image view 
+- Fixed clicking on an image not correctly directing to the image view
 - Profile attatchments now transfer alongside demographic information
 
 #### Known Issues
