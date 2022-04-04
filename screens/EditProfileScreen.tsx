@@ -35,7 +35,7 @@ import {
   encodeBase64,
   decodeBase64,
 } from "../lib/storage/encoding";
-import { deleteProfile, storeProfile, updateProfile } from "../lib/profileStorage";
+import { deleteProfile, storeProfile } from "../lib/profileStorage";
 import * as Profile from "../lib/profile";
 import {
   QUESTIONS,
