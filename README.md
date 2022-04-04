@@ -45,15 +45,21 @@ Every time code is pushed, we run the following:
 
 ## Release Notes
 
-### Sprint 3: `v0.4.0`
+### Sprint 4: `v0.4.0`
 
 #### Features
 
+- Added editing existing patient profile functionality
 - Added delete profile functionality for patient profiles
 
 #### Bug Fixes
 
+- Fixed issue that deleted large groups of profiles by accident
+
 #### Known Issues
+
+- App is slow, especially when trying to view a profile
+- Editing profiles does not include images from the previous version
 
 ### Sprint 3: `v0.3.0`
 
