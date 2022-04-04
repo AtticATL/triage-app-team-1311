@@ -40,8 +40,8 @@ export interface Focusable {
 }
 
 /** Track the contents of a field in React state */
-export function useField<Z extends ZodType<any>>(validator: Z): Field<Z> {
-  const [value, setValue] = useState<z.infer<Z> | undefined>(undefined);
+export function useField<Z extends ZodType<any>>(validator: Z, def?: z.infer<Z>): Field<Z> {
+  const [value, setValue] = useState<z.infer<Z> | undefined>(def);
   const ref = useRef(null);
   return { validator, value, setValue, ref };
 }
@@ -141,7 +141,7 @@ export function NumberField<Z extends ZodNumber>({
   ...rest
 }: FieldProps<Z> & React.ComponentProps<typeof Input>) {
   // Track the string representation of the number for editing
-  let [text, setText] = useState("");
+  let [text, setText] = useState(field.value?.toString());
 
   // Track whether the user has submitted this field before
   let [dirty, setDirty] = useState(false);
@@ -248,10 +248,9 @@ export function Checkbox({ label, help, value, onChange }: CheckboxProps) {
     <Entry px={2}>
       <NbCheckbox
         size="md"
-        value={value.toString()}
+        isChecked={value}
         onChange={onChange}
-        colorScheme="muted"
-      >
+        colorScheme="muted" value={""}      >
         <Text pl={4}>{label}</Text>
         {help && <HelpText>{help}</HelpText>}
       </NbCheckbox>

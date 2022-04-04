@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { View, StyleSheet, Button, Platform, Text } from 'react-native';
+import { View, StyleSheet, Platform, Text } from 'react-native';
+import { Button } from 'native-base';
 import * as Print from 'expo-print';
 import { shareAsync } from 'expo-sharing';
 import { Profile } from '../lib/profile';
@@ -135,9 +136,12 @@ export default function PrintScreen({
 
   return (
     <View style={styles.container}>
-      <Button title='Print' onPress={print}  />
+       <Button size="lg" py={8}
+        colorScheme="primary" onPress={print}
+      >Print PDF</Button>
       <View style={styles.spacer} />
-      <Button title='Save to PDF file and Share' onPress={printToFile}/>
+      <Button size="lg" py={8}
+        colorScheme="primary" onPress={printToFile}>Share PDF</Button>
       {Platform.OS === 'ios' &&
         <>
           <View style={styles.spacer} />

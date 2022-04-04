@@ -29,6 +29,7 @@ import ViewImageScreen from "./screens/ViewImageScreen";
 import "text-encoding";
 import "react-native-url-polyfill/auto";
 import "react-native-get-random-values";
+import EditProfileScreen from "./screens/EditProfileScreen";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -104,6 +105,13 @@ export function RootNav() {
           options={{title: "Print Screen"}}
           
         />
+        <Nav.Screen
+          name="EditProfile"
+          options={{
+            title: "Edit Profile",
+          }}
+          component={EditProfileScreen}
+        />
       </Nav.Navigator>
       <StatusBar />
     </NavigationContainer>
@@ -118,6 +126,7 @@ export type NavParams = {
   ViewProfile: { profile: Profile };
   ViewImage: { attachment: Attachment };
   PrintScreen: { profile: Profile};
+  EditProfile: { profile: Profile};
 };
 
 /**

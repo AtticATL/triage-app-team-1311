@@ -218,6 +218,18 @@ export default function ViewProfileScreen({
           </VStack>
           <Button
             onPress={() => {
+                navigation.navigate("EditProfile", {profile});
+              }
+            }
+            py={8}
+            size="lg"
+            colorScheme="dark"
+            rightIcon={<Icon as={Feather} name="edit" size="sm" />}
+          >
+            Edit
+          </Button>
+          <Button
+            onPress={() => {
                 navigation.navigate("PrintScreen", {profile});
               }
             }
