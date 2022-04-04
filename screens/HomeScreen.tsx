@@ -8,17 +8,20 @@ import {
   Pressable,
   ScrollView,
   Alert,
+  ActionSheetIOS,
+  GestureResponderEvent,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavSubProps as RootNavSubProps } from "../App";
 import * as colors from "../constants/Colors";
 import TileButton from "../components/TileButton";
 import { Profile } from "../lib/profile";
-import { listProfiles } from "../lib/profileStorage";
+import { deleteProfile, listProfiles } from "../lib/profileStorage";
 import { Spinner, Text, Heading, VStack, useColorModeValue } from "native-base";
 import { NavigationContainer } from "@react-navigation/native";
 import { useLinkProps } from "@react-navigation/native";
 import { nativeBaseTheme } from "../lib/nativeBaseTheme";
+import { profile } from "console";
 
 export default function HomeScreen({ navigation }: RootNavSubProps<"Home">) {
   return (
@@ -89,7 +92,10 @@ function ProfileCard({ profile }: { profile: Profile }) {
 
   return (
     <VStack bg={bgProps} p={4} rounded={4}>
-      <Pressable {...tapProps}>
+      <Pressable
+        onLongPress={() => openContextMenu(profile)}
+        {...tapProps}
+      >
         <Text fontSize="lg">{profile.identity.name}</Text>
       </Pressable>
       <Text>
@@ -99,3 +105,23 @@ function ProfileCard({ profile }: { profile: Profile }) {
     </VStack>
   );
 }
+
+const openContextMenu = (profile: Profile) => {
+  ActionSheetIOS.showActionSheetWithOptions(
+    {
+      options: ["Cancel", "Delete User"],
+      cancelButtonIndex: 0,
+      title: "Delete User?",
+      message: "Note: This will not delete the user from all devices",
+    },
+    (buttonIndexThatSelected) => {
+      // Do something with result
+      if (buttonIndexThatSelected == 0) {
+        return;
+      }
+      if (buttonIndexThatSelected == 1) {
+        deleteProfile(profile);
+      }
+    }
+  );
+};

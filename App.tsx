@@ -6,7 +6,7 @@ import useCachedResources from "./hooks/useCachedResources";
 import HomeScreen from "./screens/HomeScreen";
 import NotFoundScreen from "./screens/NotFoundScreen";
 import CreateProfileScreen from "./screens/CreateProfileScreen";
-import PrintScreen from "./screens/PrintScreen"
+import PrintScreen from "./screens/PrintScreen";
 import { LinkingOptions } from "@react-navigation/native";
 import * as Linking from "expo-linking";
 import { useColorScheme as useSystemColorScheme } from "react-native";
@@ -102,8 +102,7 @@ export function RootNav() {
         <Nav.Screen
           name="PrintScreen"
           component={PrintScreen}
-          options={{title: "Print Screen"}}
-          
+          options={{ title: "Print Screen" }}
         />
         <Nav.Screen
           name="EditProfile"
@@ -125,8 +124,12 @@ export type NavParams = {
   RecieveProfile: undefined;
   ViewProfile: { profile: Profile };
   ViewImage: { attachment: Attachment };
+<<<<<<< HEAD
   PrintScreen: { profile: Profile};
   EditProfile: { profile: Profile};
+=======
+  PrintScreen: { profile: Profile };
+>>>>>>> 5fa1184bdf37b8ddb990d7f4adfa953d3ca12640
 };
 
 /**
