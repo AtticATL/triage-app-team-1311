@@ -124,12 +124,8 @@ export type NavParams = {
   RecieveProfile: undefined;
   ViewProfile: { profile: Profile };
   ViewImage: { attachment: Attachment };
-<<<<<<< HEAD
   PrintScreen: { profile: Profile};
   EditProfile: { profile: Profile};
-=======
-  PrintScreen: { profile: Profile };
->>>>>>> 5fa1184bdf37b8ddb990d7f4adfa953d3ca12640
 };
 
 /**

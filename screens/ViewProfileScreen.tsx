@@ -230,7 +230,6 @@ export default function ViewProfileScreen({
           </VStack>
           <Button
             onPress={() => {
-<<<<<<< HEAD
                 navigation.navigate("EditProfile", {profile});
               }
             }
@@ -246,10 +245,6 @@ export default function ViewProfileScreen({
                 navigation.navigate("PrintScreen", {profile});
               }
             }
-=======
-              navigation.navigate("PrintScreen", { profile });
-            }}
->>>>>>> 5fa1184bdf37b8ddb990d7f4adfa953d3ca12640
             py={8}
             size="lg"
             colorScheme="dark"

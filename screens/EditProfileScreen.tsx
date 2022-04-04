@@ -35,7 +35,7 @@ import {
   encodeBase64,
   decodeBase64,
 } from "../lib/storage/encoding";
-import { storeProfile, updateProfile } from "../lib/profileStorage";
+import { deleteProfile, storeProfile, updateProfile } from "../lib/profileStorage";
 import * as Profile from "../lib/profile";
 import {
   QUESTIONS,
@@ -173,15 +173,19 @@ export default function EditProfileScreen({
   
     const draftValidation = Profile.Profile.safeParse(draftProfile);
   
-    const submit = React.useCallback(() => {
+    const submit = React.useCallback(async () => {
+
+      // Remove orginal profile
+      await deleteProfile(profile);
+
       // If, by any chance, something's still wrong, throw.
-      storeProfile(Profile.Profile.parse(draftProfile));
+      await storeProfile(Profile.Profile.parse(draftProfile));
       let url =
         "http://oi-triage-app/" +
         encodeBase64(encodeText(JSON.stringify(draftProfile)));
       console.log(url);
       // Pop this view off the stack.
-      navigation.pop();
+      navigation.navigate("Home");
     }, [draftProfile]);
   
     return (
