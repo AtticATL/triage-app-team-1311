@@ -8,6 +8,7 @@
     "start": "next start",
     "test": "jest --watchAll",
     "lint": "next lint",
+    "prettier": "prettier --write --ignore-path .gitignore .",
     "generateSchema": "ts-node ./scripts/generateProfileSchema.ts > profile-schema.json"
   },
   "dependencies": {

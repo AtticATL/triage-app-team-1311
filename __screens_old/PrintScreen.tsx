@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { View, StyleSheet, Platform, Text } from 'react-native';
-import { Button } from 'native-base';
-import * as Print from 'expo-print';
-import { shareAsync } from 'expo-sharing';
-import { Profile } from '../lib/profile';
+import * as React from "react";
+import { View, StyleSheet, Platform, Text } from "react-native";
+import { Button } from "native-base";
+import * as Print from "expo-print";
+import { shareAsync } from "expo-sharing";
+import { Profile } from "../lib/profile";
 import { NavSubProps as RootNavSubProps } from "../App";
 import { QUESTIONS } from "../lib/triageQuestions";
 import { REGIONAREAS } from "../lib/injuryRegions";
@@ -159,18 +159,19 @@ export default function PrintScreen({
 
   return (
     <View style={styles.container}>
-       <Button size="lg" py={8}
-        colorScheme="primary" onPress={print}
-      >Print PDF</Button>
+      <Button size="lg" py={8} colorScheme="primary" onPress={print}>
+        Print PDF
+      </Button>
       <View style={styles.spacer} />
-      <Button size="lg" py={8}
-        colorScheme="primary" onPress={printToFile}>Share PDF</Button>
-      {Platform.OS === 'ios' && (
+      <Button size="lg" py={8} colorScheme="primary" onPress={printToFile}>
+        Share PDF
+      </Button>
+      {Platform.OS === "ios" && (
         <>
           <View style={styles.spacer} />
           <View style={styles.spacer} />
         </>
-    )}
+      )}
     </View>
   );
 }

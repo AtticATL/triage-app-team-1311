@@ -92,10 +92,7 @@ function ProfileCard({ profile }: { profile: Profile }) {
 
   return (
     <VStack bg={bgProps} p={4} rounded={4}>
-      <Pressable
-        onLongPress={() => openContextMenu(profile)}
-        {...tapProps}
-      >
+      <Pressable onLongPress={() => openContextMenu(profile)} {...tapProps}>
         <Text fontSize="lg">{profile.identity.name}</Text>
       </Pressable>
       <Text>

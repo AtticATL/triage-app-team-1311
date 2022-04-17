@@ -40,7 +40,10 @@ export interface Focusable {
 }
 
 /** Track the contents of a field in React state */
-export function useField<Z extends ZodType<any>>(validator: Z, def?: z.infer<Z>): Field<Z> {
+export function useField<Z extends ZodType<any>>(
+  validator: Z,
+  def?: z.infer<Z>
+): Field<Z> {
   const [value, setValue] = useState<z.infer<Z> | undefined>(def);
   const ref = useRef(null);
   return { validator, value, setValue, ref };
@@ -250,7 +253,9 @@ export function Checkbox({ label, help, value, onChange }: CheckboxProps) {
         size="md"
         isChecked={value}
         onChange={onChange}
-        colorScheme="muted" value={""}      >
+        colorScheme="muted"
+        value={""}
+      >
         <Text pl={4}>{label}</Text>
         {help && <HelpText>{help}</HelpText>}
       </NbCheckbox>
