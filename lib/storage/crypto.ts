@@ -10,7 +10,10 @@ const KEY_LENGTH_BYTES = 256 / 8;
  * Throw an exception if this function runs in a production build.
  */
 function assertDevMode(msg: string) {
-  if (__DEV__ !== true) {
+  if (
+    process.env.NODE_ENV !== "development" &&
+    process.env.NODE_ENV !== "test"
+  ) {
     throw new Error(`Cannot run debug functionality in release mode: ${msg}`);
   }
 }

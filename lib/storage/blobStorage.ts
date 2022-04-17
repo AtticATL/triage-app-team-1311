@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { encodeBase64, decodeBase64 } from "./encoding";
 
 /*
@@ -22,7 +21,7 @@ export async function put(id: string, data: ArrayBuffer): Promise<void> {
   // TODO(cloud): Upload to cloud storage
 
   // Store the data to AsyncStorage.
-  await AsyncStorage.setItem(localStorageKey(id), encodeBase64(data));
+  window.localStorage.setItem(localStorageKey(id), encodeBase64(data));
 }
 
 /** Get a blob by its unique ID from local storage. Returns null if the key doesn't exist. */
@@ -30,7 +29,7 @@ export async function get(id: string): Promise<ArrayBuffer | null> {
   const storageKey = localStorageKey(id);
 
   console.log(`BlobStorage.get(id=${id}) key=${storageKey}`);
-  const storageValue = await AsyncStorage.getItem(storageKey);
+  const storageValue = window.localStorage.getItem(storageKey);
 
   // TODO(cloud): Download from cloud storage
 
