@@ -20,11 +20,8 @@ it("encrypts and decrypts a message correctly", async () => {
 
   // Export and re-import the key
   let exportedKey = await exportKey(key);
-  if (exportedKey != null) {
-    // TODO(stub): remove this
-    // Roundtrip through base64
-    exportedKey = decodeBase64(encodeBase64(exportedKey));
-  }
+  // Roundtrip through base64
+  exportedKey = decodeBase64(encodeBase64(exportedKey));
   const importedKey = await importKey(exportedKey);
 
   // Decrypt the message

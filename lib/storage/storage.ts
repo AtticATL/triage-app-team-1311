@@ -14,9 +14,7 @@ export type Handle = Readonly<{
   id: Uuid4;
 
   /** The key used to store the data in the cloud storage bucket */
-  key: Base64 | null; // TODO(stub): remove nullability
-
-  // TODO(stub): Add integrity hash
+  key: Base64;
 }>;
 
 /**
@@ -36,11 +34,11 @@ export type EarlyHandle = {
  *
  * @param handle The handle to the data, with the ID of its contents, and the key used to decrypt it.
  */
-export async function get(handle: Handle): Promise<ArrayBuffer | null> {
+export async function get(handle: Handle): Promise<ArrayBuffer> {
   console.log(`Storage.get(id=${handle.id}) key=${handle.key}`);
 
   // Decode and import the key
-  const key = await importKey(handle.key ? decodeBase64(handle.key) : null); // TODO(stub)
+  const key = await importKey(decodeBase64(handle.key));
 
   // Get the data, first attempting the local storage, then Cloud Storage.
   console.log(`Storage.get(id=${handle.id}) loading ciphertext...`);
@@ -49,7 +47,7 @@ export async function get(handle: Handle): Promise<ArrayBuffer | null> {
   // If the ID isn't in blob storage, the data doesn't exist.
   if (ciphertext == null) {
     console.log(`Storage.get(id=${handle.id}) [does not exist]`);
-    return null;
+    throw new Error(`Storage with id=${handle.id} does not exist`);
   }
 
   // Decrypt the data.
@@ -75,10 +73,9 @@ export async function put(data: ArrayBuffer): Promise<EarlyHandle> {
   // Generate a key to encrypt the data
   const key = await generateKey();
   const exportedKey = await exportKey(key);
-  const keyB64 = exportedKey ? encodeBase64(exportedKey) : null; // TODO(stub)
+  const keyB64 = encodeBase64(exportedKey);
 
   // We can perform the actual encryption and upload in a background task.
-  // The plaintext is already cached in memory.
   const encryptAndUpload = async () => {
     // Perform the encryption
     //   Note: the AES-GCM IV and some metadata are prepended to the ciphertext here

@@ -21,50 +21,30 @@ function assertDevMode(msg: string) {
 /**
  * Generate a symmetric encryption key.
  */
-export async function generateKey(): Promise<CryptoKey | null> {
+export async function generateKey(): Promise<CryptoKey> {
   console.log("[storage/crypto] generating key");
 
-  // TODO(stub): For the time being, encryption is disabled here.
-  assertDevMode("stub key generation");
-  return null;
-
-  // return await crypto.subtle.generateKey(
-  //   {
-  //     name: "AES-GCM",
-  //     length: KEY_LENGTH_BYTES * 8, // 256-bit
-  //   },
-  //   true, // Key is exportable: we can get it as an ArrayBuffer
-  //   ["encrypt", "decrypt"]
-  // );
+  return await crypto.subtle.generateKey(
+    {
+      name: "AES-GCM",
+      length: KEY_LENGTH_BYTES * 8, // 256-bit
+    },
+    true, // Key is exportable: we can get it as an ArrayBuffer
+    ["encrypt", "decrypt"]
+  );
 }
 
 /**
  * Export a CryptoKey to bytes for storage.
  */
-export async function exportKey(
-  key: CryptoKey | null
-): Promise<ArrayBuffer | null> {
-  // TODO(stub): Stub out key export in dev mode
-  if (key == null) {
-    assertDevMode("stub key export");
-    return null;
-  }
-
+export async function exportKey(key: CryptoKey): Promise<ArrayBuffer> {
   return await crypto.subtle.exportKey("raw", key);
 }
 
 /**
  * Import bytes into a CryptoKey for use.
  */
-export async function importKey(
-  data: BufferSource | null
-): Promise<CryptoKey | null> {
-  // TODO(stub): Stub out key import in dev mode
-  if (data == null) {
-    assertDevMode("stub key import");
-    return null;
-  }
-
+export async function importKey(data: BufferSource): Promise<CryptoKey> {
   return await crypto.subtle.importKey("raw", data, "AES-GCM", true, [
     "encrypt",
     "decrypt",
@@ -90,30 +70,22 @@ async function generateIv(): Promise<ArrayBuffer> {
  */
 export async function encrypt(
   plaintext: BufferSource,
-  key: CryptoKey | null
+  key: CryptoKey
 ): Promise<ArrayBuffer> {
   console.log("[storage/crypto] encrypt");
 
   // Generate a unique initialization vector
   const iv = await generateIv();
 
-  let ciphertext;
-  if (key != null) {
-    // Encrypt the plaintext
-    ciphertext = await crypto.subtle.encrypt(
-      {
-        name: "AES-GCM",
-        iv,
-      },
-      key,
-      plaintext
-    );
-  } else {
-    // TODO(stub): Stub out encryption in dev mode
-    assertDevMode("passthrough encryption");
-    ciphertext = new Uint8Array(plaintext.byteLength);
-    ciphertext.set(new Uint8Array(plaintext));
-  }
+  // Encrypt the plaintext
+  const ciphertext = await crypto.subtle.encrypt(
+    {
+      name: "AES-GCM",
+      iv,
+    },
+    key,
+    plaintext
+  );
 
   // Set up binary headers for the ciphertext, to store the IV
   // In the future, other data might be useful to store here---so reserve
@@ -133,7 +105,7 @@ export async function encrypt(
  */
 export async function decrypt(
   encryptedData: BufferSource,
-  key: CryptoKey | null
+  key: CryptoKey
 ): Promise<ArrayBuffer> {
   console.log("[storage/crypto] decrypt");
 
@@ -152,20 +124,12 @@ export async function decrypt(
   }
 
   // Decrypt the message
-  if (key != null) {
-    return crypto.subtle.decrypt(
-      {
-        name: "AES-GCM",
-        iv,
-      },
-      key,
-      ciphertext
-    );
-  } else {
-    // TODO(stub): Stub out decryption in dev mode
-    assertDevMode("passthrough decryption");
-    const copy = new Uint8Array(ciphertext.byteLength);
-    copy.set(ciphertext, 0);
-    return copy.buffer;
-  }
+  return crypto.subtle.decrypt(
+    {
+      name: "AES-GCM",
+      iv,
+    },
+    key,
+    ciphertext
+  );
 }

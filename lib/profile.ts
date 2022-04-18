@@ -99,16 +99,9 @@ export type InfectionRegions = z.infer<typeof InfectionRegions>;
  */
 export const Handle = z.object({
   id: z.string().uuid({ message: "Data must have a valid UUID" }),
-
-  key: z.nullable(
-    // TODO: nullable to support stub encryption
-    Base64String.length(44, {
-      message:
-        "Base64-encoded encryption key must be exactly 44 characters long",
-    })
-  ),
-
-  // TODO(stub): Add integrity hash
+  key: Base64String.length(44, {
+    message: "Base64-encoded encryption key must be exactly 44 characters long",
+  }),
 });
 export type Handle = Readonly<z.infer<typeof Handle>>;
 

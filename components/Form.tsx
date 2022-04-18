@@ -1,20 +1,11 @@
 import * as React from "react";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useMemo } from "react";
 import { ZodType, z, ZodIssue, ZodEnum, ZodNumber } from "zod";
-import {
-  Box,
-  FormControl,
-  Input,
-  VStack,
-  Text,
-  HStack,
-  useColorModeValue,
-  Button,
-  TextArea,
-  useToken,
-  Checkbox as NbCheckbox,
-} from "native-base";
-import { Feather } from "@expo/vector-icons";
+import { FiAlertCircle } from "react-icons/fi";
+import { Text, Pane, Button } from "evergreen-ui";
+import { danger, muted } from "../colors";
+import Input from "./Input";
+import Textarea from "./Textarea";
 
 /** Data tracking the correct value of a field, ignoring any incorrect data.  */
 export interface Field<Z extends ZodType<any>> {
@@ -28,15 +19,6 @@ export interface Field<Z extends ZodType<any>> {
 
   /** A function to update the current value of the field, wherever it's stored */
   setValue: (value: z.infer<Z> | undefined) => void;
-
-  /** A React component ref to the input element */
-  ref: React.RefObject<Focusable>;
-}
-
-/** Any React element that can receive focus */
-export interface Focusable {
-  /** Move input focus to this element. */
-  focus(): void;
 }
 
 /** Track the contents of a field in React state */
@@ -45,24 +27,29 @@ export function useField<Z extends ZodType<any>>(
   def?: z.infer<Z>
 ): Field<Z> {
   const [value, setValue] = useState<z.infer<Z> | undefined>(def);
-  const ref = useRef(null);
-  return { validator, value, setValue, ref };
+
+  return useMemo(
+    () => ({
+      validator,
+      value,
+      setValue,
+    }),
+    [validator, value, setValue]
+  );
 }
 
 export interface FieldProps<Z extends ZodType<any>> {
   field: Field<Z>;
-  nextField?: Field<any>;
   label: string;
   help?: string;
 }
 
 export function TextField<Z extends ZodType<string | undefined>>({
   field,
-  nextField,
   label,
   help,
   ...rest
-}: FieldProps<Z> & React.ComponentProps<typeof Input>) {
+}: FieldProps<Z>) {
   // Track whether the user has submitted this field before
   let [dirty, setDirty] = useState(false);
   let clean = !dirty && field.value === "";
@@ -73,39 +60,30 @@ export function TextField<Z extends ZodType<string | undefined>>({
 
   return (
     <Entry>
-      <Label>{label}</Label>
-      <Input
-        size="md"
-        variant="unstyled"
-        {...rest}
-        value={field.value || ""}
-        onChangeText={field.setValue}
-        onSubmitEditing={() => {
-          if (nextField && nextField.ref.current) {
-            nextField.ref.current.focus();
-          }
-        }}
-        onBlur={() => {
-          setDirty(true);
+      <Label label={label}>
+        <Input
+          type="text"
+          value={field.value || ""}
+          onChange={field.setValue}
+          onBlur={() => {
+            setDirty(true);
 
-          // Remove whitespace around, and null out of empty.
-          let trimmed = field.value && field.value.trim();
-          let nulled = trimmed || undefined;
-          field.setValue(nulled);
-        }}
-        blurOnSubmit={!(nextField && nextField.ref.current)}
-        ref={field.ref}
-      />
-      {dirty &&
-        issues.map((issue, i) => <Error key={i}>{issue.message}</Error>)}
-      {help && <HelpText>{help}</HelpText>}
+            // Remove whitespace around, and null out of empty.
+            let trimmed = field.value && field.value.trim();
+            let nulled = trimmed || undefined;
+            field.setValue(nulled);
+          }}
+        />
+        {dirty &&
+          issues.map((issue, i) => <Error key={i}>{issue.message}</Error>)}
+        {help && <HelpText>{help}</HelpText>}
+      </Label>
     </Entry>
   );
 }
 
 export function EnumField<Z extends ZodEnum<any>>({
   field,
-  nextField,
   label,
   help,
   ...rest
@@ -116,21 +94,20 @@ export function EnumField<Z extends ZodEnum<any>>({
 
   return (
     <Entry>
-      <Label>{label}</Label>
-      <Button.Group mx={2} my={2}>
+      <Label label={label} />
+      <Pane>
         {field.validator.options.map((option: string) => (
           <Button
             key={option}
-            colorScheme="light"
-            variant={field.value == option ? "solid" : "unstyled"}
-            onPress={() => field.setValue(option)}
+            appearance={field.value == option ? "primary" : "minimal"}
+            onClick={() => field.setValue(option)}
           >
             {option}
           </Button>
         ))}
-      </Button.Group>
+      </Pane>
       {field.value != undefined &&
-        issues.map((issue) => <Error>{issue.message}</Error>)}
+        issues.map((issue, i) => <Error key={i}>{issue.message}</Error>)}
       {help && <HelpText>{help}</HelpText>}
     </Entry>
   );
@@ -138,11 +115,10 @@ export function EnumField<Z extends ZodEnum<any>>({
 
 export function NumberField<Z extends ZodNumber>({
   field,
-  nextField,
   label,
   help,
   ...rest
-}: FieldProps<Z> & React.ComponentProps<typeof Input>) {
+}: FieldProps<Z>) {
   // Track the string representation of the number for editing
   let [text, setText] = useState(field.value?.toString());
 
@@ -154,53 +130,46 @@ export function NumberField<Z extends ZodNumber>({
   let zodResult = field.validator.safeParse(field.value);
   let issues = zodResult.success ? [] : zodResult.error.issues;
 
-  const onChange = useCallback((value: string) => {
-    // Always update the local value.
-    setText(value);
+  const onChange = useCallback(
+    (value: string) => {
+      setText(value);
 
-    // If the text is parseable as a number, update the field value.
-    let maybeParsed = parseFloat(value);
-    if (!isNaN(maybeParsed)) {
-      field.setValue(maybeParsed);
-    } else {
-      field.setValue(undefined);
-    }
-  }, []);
+      // If the text is parseable as a number, update the field value.
+      let maybeParsed = Number(value);
+      if (!isNaN(maybeParsed)) {
+        field.setValue(maybeParsed);
+      } else {
+        field.setValue(undefined);
+      }
+    },
+    [setText, field]
+  );
 
   return (
     <Entry>
-      <Label>{label}</Label>
-      <Input
-        size="md"
-        variant="unstyled"
-        {...rest}
-        value={text}
-        onChangeText={onChange}
-        onSubmitEditing={() => {
-          setDirty(true);
-          if (nextField && nextField.ref.current) {
-            nextField.ref.current.focus();
-          }
-        }}
-        onBlur={() => setDirty(true)}
-        keyboardType={field.validator.isInt ? "number-pad" : "decimal-pad"}
-        blurOnSubmit={!(nextField && nextField.ref.current)}
-        ref={field.ref}
-      />
-      {dirty &&
-        issues.map((issue, i) => <Error key={i}>{issue.message}</Error>)}
-      {help && <HelpText>{help}</HelpText>}
+      <Label label={label}>
+        <Input
+          type="text"
+          {...rest}
+          value={text || ""}
+          onChange={onChange}
+          onBlur={() => setDirty(true)}
+          inputMode={field.validator.isInt ? "numeric" : "decimal"}
+        />
+        {dirty &&
+          issues.map((issue, i) => <Error key={i}>{issue.message}</Error>)}
+        {help && <HelpText>{help}</HelpText>}
+      </Label>
     </Entry>
   );
 }
 
 export function ParagraphField<Z extends ZodType<string | undefined>>({
   field,
-  nextField,
   label,
   help,
   ...rest
-}: FieldProps<Z> & React.ComponentProps<typeof Input>) {
+}: FieldProps<Z>) {
   // Track whether the user has submitted this field before
   let [dirty, setDirty] = useState(false);
   let clean = !dirty && field.value === "";
@@ -211,89 +180,76 @@ export function ParagraphField<Z extends ZodType<string | undefined>>({
 
   return (
     <Entry>
-      <Label>{label}</Label>
-      {help && <HelpText>{help}</HelpText>}
-      <Input
-        size="md"
-        variant="unstyled"
-        {...rest}
-        value={field.value || ""}
-        onChangeText={field.setValue}
-        multiline
-        textAlignVertical="top"
-        minHeight={useToken("space", 8)}
-        onBlur={() => {
-          setDirty(true);
+      <Label label={label}>
+        <Textarea
+          value={field.value || ""}
+          onChange={field.setValue}
+          onBlur={() => {
+            setDirty(true);
 
-          // Remove whitespace around, and null out of empty.
-          let trimmed = field.value && field.value.trim();
-          let nulled = trimmed || undefined;
-          field.setValue(nulled);
-        }}
-        blurOnSubmit={!(nextField && nextField.ref.current)}
-        ref={field.ref}
-      />
-      {dirty &&
-        issues.map((issue, i) => <Error key={i}>{issue.message}</Error>)}
-    </Entry>
-  );
-}
-
-export interface CheckboxProps {
-  label: string;
-  help?: string;
-  value: boolean;
-  onChange: (checked: boolean) => void;
-}
-
-export function Checkbox({ label, help, value, onChange }: CheckboxProps) {
-  return (
-    <Entry px={2}>
-      <NbCheckbox
-        size="md"
-        isChecked={value}
-        onChange={onChange}
-        colorScheme="muted"
-        value={""}
-      >
-        <Text pl={4}>{label}</Text>
+            // Remove whitespace around, and null out of empty.
+            let trimmed = field.value && field.value.trim();
+            let nulled = trimmed || undefined;
+            field.setValue(nulled);
+          }}
+        />
         {help && <HelpText>{help}</HelpText>}
-      </NbCheckbox>
+        {dirty &&
+          issues.map((issue, i) => <Error key={i}>{issue.message}</Error>)}
+      </Label>
     </Entry>
   );
 }
 
-/** Group surrounding an input, its label, helper text, and any validation errors. */
 export function Entry({
   children,
-  ...rest
-}: { children: React.ReactNode } & React.ComponentProps<typeof VStack>) {
+  gap,
+}: {
+  children: React.ReactNode;
+  gap?: number;
+}) {
   return (
-    <VStack
-      bg={useColorModeValue("white", "muted.800")}
-      rounded="md"
-      px={1}
-      py={2}
-      {...rest}
+    <Pane
+      backgroundColor="white"
+      borderRadius={8}
+      paddingX={8}
+      paddingY={8}
+      display="flex"
+      flexDirection="column"
+      gap={gap || 8}
     >
       {children}
-    </VStack>
+    </Pane>
   );
 }
 
-/** The name of an input. */
-function Label({ children }: { children: string }) {
+function Label({
+  label,
+  children,
+}: {
+  label: string;
+  children?: React.ReactNode;
+}) {
   return (
-    <Text fontWeight="bold" mx={2}>
+    <label>
+      <style jsx>{`
+        label {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+      `}</style>
+      <Text fontWeight="bold" marginX={2}>
+        {label}
+      </Text>
       {children}
-    </Text>
+    </label>
   );
 }
 
-/** Render explanatory help text for the input */
 function HelpText({ children }: { children: string }) {
   return (
-    <Text mx={2} color="muted.500">
+    <Text marginX={2} color={muted}>
       {children}
     </Text>
   );
@@ -301,13 +257,13 @@ function HelpText({ children }: { children: string }) {
 
 function Error({ children }: { children: string }) {
   return (
-    <HStack alignItems="flex-start" mx={2}>
-      <Box alignSelf="flex-start" justifyContent="center" h={5}>
-        <Feather name="alert-circle" color="red" />
-      </Box>
-      <Text px={2} color="error.600">
+    <Pane display="flex" flexDirection="row" alignItems="center" gap={8}>
+      <Pane alignSelf="flex-start" justifyContent="center">
+        <FiAlertCircle color={danger} />
+      </Pane>
+      <Text paddingX={2} color={danger}>
         {children}
       </Text>
-    </HStack>
+    </Pane>
   );
 }

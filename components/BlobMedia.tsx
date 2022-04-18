@@ -1,9 +1,7 @@
 import * as React from "react";
-import { Box, Spinner } from "native-base";
+import { Pane, Spinner } from "evergreen-ui";
 import { Handle } from "../lib/storage/storage";
 
-// @ts-ignore
-import { Image } from "native-base";
 import { useMedia } from "../hooks/useMedia";
 
 export default function BlobMedia({ handle }: { handle: Handle }) {
@@ -11,17 +9,18 @@ export default function BlobMedia({ handle }: { handle: Handle }) {
 
   if (dataUri == null) {
     return (
-      <Box>
-        <Spinner size="lg" />
-      </Box>
+      <Pane>
+        <Spinner size={16} />
+      </Pane>
     );
   }
 
   return (
-    <Image
-      style={{ width: "100%", height: 200 }}
-      resizeMode="contain"
-      source={{ uri: dataUri }}
+    // No use lazy-loading this
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      style={{ width: "100%", height: 200, objectFit: "cover" }}
+      src={dataUri}
       alt="Image Attachment"
     />
   );

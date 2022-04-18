@@ -1,0 +1,9 @@
+{
+  "name": "Emory TransferApp",
+  "short_name": "TransferApp",
+  "orientation": "portrait",
+  "display": "standalone",
+  "scope": "/",
+  "scope_url": "/",
+  "start_url": "/"
+}
