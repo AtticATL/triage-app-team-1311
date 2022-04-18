@@ -29,6 +29,7 @@ import {
   deleteLocalProfile,
   StoredProfileRef,
 } from "../lib/storage/localProfileStorage";
+import { useStoredObject } from "../lib/storage/storage";
 import { muted } from "../colors";
 
 export default function Home() {
@@ -102,19 +103,27 @@ function ProfileList() {
 }
 
 function ProfileCard({ profile: stored }: { profile: StoredProfileRef }) {
-  let [profile, setProfile] = useState<Profile.Profile | null>(null);
-  useEffect(() => {
-    stored.get().then(setProfile);
-  }, [stored]);
+  const {
+    value: profile,
+    loading,
+    error,
+  } = useStoredObject(stored.handle, Profile.Profile);
 
-  if (profile == null) {
+  if (loading) {
     return <Card elevation={1} height={32} />;
+  }
+
+  if (error) {
+    return <Card elevation={1}>Error: {error.toString()}</Card>;
   }
 
   return (
     <Card elevation={1} padding={16}>
       <Pane display="flex" flexDirection="row" alignItems="center">
-        <Link href="/profile/TODO" passHref>
+        <Link
+          href={`/profile/${stored.handle.id}#${stored.handle.key}`}
+          passHref
+        >
           <Pane is="a" flex="1">
             <Pane>
               <Text color="black" fontSize="1.1em">

@@ -24,13 +24,14 @@ export default function Create() {
 
     setAction("Uploading...");
     await early.waitForDurableStorage;
+    const handle = early.handle;
 
     // If, by any chance, something's still wrong, throw.
-    await putLocalProfile(early.handle);
+    await putLocalProfile(handle);
     setAction("Done");
 
     // Return home
-    router.push("/");
+    router.replace(`/profile/${handle.id}#${handle.key}`);
   };
 
   return (

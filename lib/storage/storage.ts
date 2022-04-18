@@ -2,6 +2,8 @@ import { encrypt, decrypt, generateKey, exportKey, importKey } from "./crypto";
 import { encodeJson, decodeJson, encodeBase64, decodeBase64 } from "./encoding";
 import { v4 as uuidv4 } from "uuid";
 import * as BlobStorage from "./blobStorage";
+import { z, ZodType } from "zod";
+import { useEffect, useState } from "react";
 
 /** Alias denoting a base64 string */
 export type Base64 = string;
@@ -115,11 +117,33 @@ export async function putJson(obj: any): Promise<EarlyHandle> {
   return put(buf);
 }
 
-/**
- * Make a copy of an ArrayBuffer
- */
-function copyBuf(buf: ArrayBuffer): ArrayBuffer {
-  const dest = new ArrayBuffer(buf.byteLength);
-  new Uint8Array(dest).set(new Uint8Array(buf));
-  return dest;
+export function useStoredObject<Z extends ZodType<any>>(
+  handle: Handle,
+  validator: Z
+): { value: z.infer<Z>; loading: boolean; error: Error | null } {
+  let [loading, setLoading] = useState(true);
+  let [error, setError] = useState<Error | null>(null);
+  let [value, setValue] = useState<z.infer<Z> | undefined>(undefined);
+
+  useEffect(() => {
+    let cancel = false;
+
+    getJson(handle)
+      .then((val) => {
+        if (!cancel) {
+          setValue(validator.parse(val));
+          setLoading(false);
+        }
+      })
+      .catch((err: Error) => {
+        setLoading(false);
+        setError(err);
+      });
+
+    return () => {
+      cancel = true;
+    };
+  }, [handle, validator]);
+
+  return { loading, error, value };
 }
