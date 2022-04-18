@@ -9,9 +9,7 @@ import Textarea from "./Textarea";
 
 /** Data tracking the correct value of a field, ignoring any incorrect data.  */
 export interface Field<Z extends ZodType<any>> {
-  /**
-   * Zod type validator for the contents of this field.
-   */
+  /** Zod type validator for the contents of this field. */
   validator: Z;
 
   /** The current value of the field. Can be undefined */
@@ -27,15 +25,7 @@ export function useField<Z extends ZodType<any>>(
   def?: z.infer<Z>
 ): Field<Z> {
   const [value, setValue] = useState<z.infer<Z> | undefined>(def);
-
-  return useMemo(
-    () => ({
-      validator,
-      value,
-      setValue,
-    }),
-    [validator, value, setValue]
-  );
+  return { validator, value, setValue };
 }
 
 export interface FieldProps<Z extends ZodType<any>> {

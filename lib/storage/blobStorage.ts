@@ -1,26 +1,6 @@
 import { encodeBase64, decodeBase64 } from "./encoding";
 import { DBSchema, openDB, IDBPDatabase } from "idb";
-
-interface BlobDB extends DBSchema {
-  blobs: {
-    value: ArrayBuffer;
-    key: string;
-  };
-}
-
-/** Open the IndexedDB store we're using for the blobs */
-async function db(): Promise<IDBPDatabase<BlobDB>> {
-  if (_db == null) {
-    _db = await openDB<BlobDB>("@triage-app/blobs", 2, {
-      upgrade(db) {
-        db.createObjectStore("blobs");
-      },
-    });
-  }
-
-  return _db;
-}
-let _db: IDBPDatabase<BlobDB> | null = null;
+import { db } from "./local";
 
 /** Stores a data blob in local storage. */
 export async function put(id: string, data: ArrayBuffer): Promise<void> {

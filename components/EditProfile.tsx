@@ -150,18 +150,18 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
 
     return Profile.Profile.safeParse(draftProfile);
   }, [
-    name,
-    birthYear,
-    sex,
+    name.value,
+    birthYear.value,
+    sex.value,
+    currentInfectionHistory.value,
+    pastHistory.value,
+    otherNotes.value,
     answers,
     regions,
-    currentInfectionHistory,
-    pastHistory,
-    otherNotes,
     uploads,
   ]);
 
-  useEffect(() => {
+  const submitted = useMemo(() => {
     if (draftValidation.success && uploadsReady) {
       onChange(draftValidation.data);
     } else {

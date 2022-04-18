@@ -2,13 +2,13 @@ import { Pane, Text, Heading, Button } from "evergreen-ui";
 import NavBar from "../components/NavBar";
 import Head from "next/head";
 import Container from "../components/Container";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import EditProfile from "../components/EditProfile";
 import * as Profile from "../lib/profile";
 import ScreenFrame from "../components/ScreenFrame";
 import { FiArrowRight } from "react-icons/fi";
-import { storeProfile } from "../lib/profileStorage";
-import { useRouter } from "next/router";
+import { putLocalProfile } from "../lib/storage/localProfileStorage";
+import { NextRouter, useRouter } from "next/router";
 import { encodeBase64, encodeText } from "../lib/storage/encoding";
 import { putJson } from "../lib/storage/storage";
 
@@ -20,13 +20,13 @@ export default function Create() {
 
   const submit = async () => {
     setAction("Encrypting profile...");
-    let handle = await putJson(Profile.Profile.parse(profile));
+    let early = await putJson(Profile.Profile.parse(profile));
 
     setAction("Uploading...");
-    await handle.waitForDurableStorage;
+    await early.waitForDurableStorage;
 
     // If, by any chance, something's still wrong, throw.
-    storeProfile(Profile.Profile.parse(profile));
+    await putLocalProfile(early.handle);
     setAction("Done");
 
     // Return home
@@ -54,8 +54,18 @@ export default function Create() {
             isLoading={action != null}
             onClick={() => submit()}
           >
-            {action || "Submit Profile"}
+            Submit Profile
           </Button>
+          {action && (
+            <Text
+              fontStyle="italic"
+              textAlign="center"
+              display="block"
+              marginTop={8}
+            >
+              {action}
+            </Text>
+          )}
         </Pane>
       )}
     </ScreenFrame>

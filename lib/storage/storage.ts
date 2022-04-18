@@ -4,10 +4,10 @@ import { v4 as uuidv4 } from "uuid";
 import * as BlobStorage from "./blobStorage";
 
 /** Alias denoting a base64 string */
-type Base64 = string;
+export type Base64 = string;
 
 /** Alias denoting a Uuidv4 */
-type Uuid4 = string;
+export type Uuid4 = string;
 
 export type Handle = Readonly<{
   /** Unique uuidv4 for this item */

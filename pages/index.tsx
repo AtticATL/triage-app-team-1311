@@ -24,12 +24,14 @@ import Link from "next/link";
 import Container from "../components/Container";
 import TileLink from "../components/TileLink";
 import * as Profile from "../lib/profile";
-import { useProfiles, deleteProfile } from "../lib/profileStorage";
+import {
+  useLocalProfiles,
+  deleteLocalProfile,
+  StoredProfileRef,
+} from "../lib/storage/localProfileStorage";
 import { muted } from "../colors";
 
 export default function Home() {
-  const profiles = useProfiles();
-
   return (
     <div>
       <Head>
@@ -54,7 +56,7 @@ export default function Home() {
             </TileLink>
           </Pane>
           <Pane marginY={40}>
-            <ProfileList profiles={profiles} />
+            <ProfileList />
           </Pane>
           {process.env.NODE_ENV == "development" && (
             <Pane marginTop={64}>
@@ -69,7 +71,9 @@ export default function Home() {
   );
 }
 
-function ProfileList({ profiles }: { profiles: Profile.Profile[] | null }) {
+function ProfileList() {
+  const profiles = useLocalProfiles();
+
   if (profiles == null) {
     return <Spinner />;
   }
@@ -89,15 +93,24 @@ function ProfileList({ profiles }: { profiles: Profile.Profile[] | null }) {
     <>
       <Heading marginBottom={8}>Recent Profiles</Heading>
       <Pane display="flex" flexDirection="column" gap={8}>
-        {profiles.map((p, i) => (
-          <ProfileCard profile={p} key={i} />
+        {profiles.map((p) => (
+          <ProfileCard profile={p} key={p.id} />
         ))}
       </Pane>
     </>
   );
 }
 
-function ProfileCard({ profile }: { profile: Profile.Profile }) {
+function ProfileCard({ profile: stored }: { profile: StoredProfileRef }) {
+  let [profile, setProfile] = useState<Profile.Profile | null>(null);
+  useEffect(() => {
+    stored.get().then(setProfile);
+  }, [stored]);
+
+  if (profile == null) {
+    return <Card elevation={1} height={32} />;
+  }
+
   return (
     <Card elevation={1} padding={16}>
       <Pane display="flex" flexDirection="row" alignItems="center">
@@ -123,7 +136,7 @@ function ProfileCard({ profile }: { profile: Profile.Profile }) {
             content={
               <Menu>
                 <Menu.Item
-                  onSelect={() => deleteProfile(profile)}
+                  onSelect={() => deleteLocalProfile(stored.id)}
                   icon={TrashIcon}
                   intent="danger"
                 >
