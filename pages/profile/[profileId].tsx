@@ -9,6 +9,7 @@ import ScreenFrame from "../../components/ScreenFrame";
 import { useStoredObject } from "../../lib/storage/storage";
 import { useState } from "react";
 import { Text, Heading, Pane, Spinner, Card, Paragraph } from "evergreen-ui";
+import BlobMedia from "../../components/BlobMedia";
 
 const Params = z.object({
   query: z.object({
@@ -81,6 +82,11 @@ function ViewProfilePage({ handle }: { handle: Handle }) {
           <Paragraph>{profile.patientHistory.pastHistory}</Paragraph>
           <Heading marginTop={16}>Other Notes</Heading>
           <Paragraph>{profile.patientHistory.otherNotes}</Paragraph>
+        </Card>
+        <Card elevation={1} backgroundColor="white" padding={8}>
+          {profile.attachments.map((attachment) => (
+            <BlobMedia key={attachment.blob.id} handle={attachment.blob} />
+          ))}
         </Card>
       </Pane>
     </ScreenFrame>

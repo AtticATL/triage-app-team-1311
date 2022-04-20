@@ -19,7 +19,7 @@ export default function BlobMedia({ handle }: { handle: Handle }) {
     // No use lazy-loading this
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      style={{ width: "100%", height: 200, objectFit: "cover" }}
+      style={{ width: "100%", height: 400, objectFit: "contain" }}
       src={dataUri}
       alt="Image Attachment"
     />

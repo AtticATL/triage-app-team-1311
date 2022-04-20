@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "site": "oi-triage-app",
+    "public": "out",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "/profile/*",
+        "destination": "/profile/[profileId].html"
+      }
+    ],
+    "cleanUrls": true
+  },
+  "storage": {
+    "rules": "firebase/storage.rules"
+  }
+}

@@ -1,11 +1,21 @@
+import { useEffect } from "react";
 import "./_app.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import { login } from "../lib/firebase";
 
 // Load the Inter UI font
 import "inter-ui/inter-hinted-latin.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
+  // On every pageload, try to sign in to Firebase anonymously.
+  useEffect(() => {
+    // Don't do any auth during SSR.
+    if (process.browser) {
+      login();
+    }
+  }, []);
+
   return (
     <>
       <Head>

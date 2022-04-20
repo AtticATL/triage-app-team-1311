@@ -5,13 +5,7 @@ import { getJson, Uuid4 } from "./storage";
 
 const STORE: keyof Schema & "local_profiles" = "local_profiles";
 
-const NOTIF_BROADCAST_CHAN_NAME = "@transfer-app/local-profile-notifications";
-const sendNotification = process.browser
-  ? new BroadcastChannel(NOTIF_BROADCAST_CHAN_NAME)
-  : null;
-const recvNotification = process.browser
-  ? new BroadcastChannel(NOTIF_BROADCAST_CHAN_NAME)
-  : null;
+const UPDATE_CHANNEL = new EventTarget();
 const UPDATED_NOTIF = "updated" as const;
 
 export interface StoredProfile {
@@ -51,12 +45,12 @@ export async function putLocalProfile(handle: Handle): Promise<void> {
   const objs = tx.objectStore(STORE);
 
   await objs.put({ handle, addedAt: Date.now() }, handle.id);
-  sendNotification?.postMessage(UPDATED_NOTIF);
+  UPDATE_CHANNEL.dispatchEvent(new Event(UPDATED_NOTIF));
 }
 
 export async function deleteLocalProfile(id: Uuid4): Promise<void> {
   await (await db()).delete(STORE, id);
-  sendNotification?.postMessage(UPDATED_NOTIF);
+  UPDATE_CHANNEL.dispatchEvent(new Event(UPDATED_NOTIF));
 }
 
 export function useLocalProfiles(): StoredProfileRef[] | null {
@@ -69,8 +63,8 @@ export function useLocalProfiles(): StoredProfileRef[] | null {
       update();
     };
 
-    recvNotification?.addEventListener("message", listener);
-    return () => recvNotification?.removeEventListener("message", listener);
+    UPDATE_CHANNEL.addEventListener(UPDATED_NOTIF, listener);
+    return () => UPDATE_CHANNEL.removeEventListener(UPDATED_NOTIF, listener);
   }, []);
 
   return profiles;

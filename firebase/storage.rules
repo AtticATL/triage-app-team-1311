@@ -1,0 +1,10 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /blob/{uuid} {
+      // Create/read access to blobs with valid UUIDs
+      allow read, create: if request.auth != null 
+        && uuid.matches('[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}');
+    }
+  }
+}
