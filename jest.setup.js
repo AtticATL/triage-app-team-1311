@@ -4,3 +4,6 @@ window.TextDecoder = require("util").TextDecoder;
 
 // Polyfill crypto.getRandomValues
 window.crypto = require("crypto").webcrypto;
+
+// Mock IndexedDB
+require("fake-indexeddb/auto");

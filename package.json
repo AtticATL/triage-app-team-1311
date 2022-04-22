@@ -9,7 +9,8 @@
     "test": "jest --watchAll",
     "lint": "next lint",
     "prettier": "prettier --write --ignore-path .gitignore .",
-    "generateSchema": "ts-node ./scripts/generateProfileSchema.ts > profile-schema.json"
+    "generateSchema": "ts-node ./scripts/generateProfileSchema.ts > profile-schema.json",
+    "deploy": "firebase deploy"
   },
   "dependencies": {
     "base64-arraybuffer": "^1.0.2",
@@ -35,6 +36,7 @@
     "@types/uuid": "^8.3.4",
     "eslint": "8.13.0",
     "eslint-config-next": "12.1.5",
+    "fake-indexeddb": "^3.1.7",
     "firebase-tools": "^10.6.0",
     "jest": "^27.5.1",
     "next-compose-plugins": "^2.2.1",

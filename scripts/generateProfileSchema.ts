@@ -1,4 +1,3 @@
-#!/usr/bin/env ts-node
 import { z } from "zod";
 import zodToJsonSchema from "zod-to-json-schema";
 import { Profile } from "../lib/profile";

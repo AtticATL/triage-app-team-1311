@@ -50,6 +50,29 @@ jobs:
       - name: Run prettier
         run: yarn run --silent prettier --check --ignore-path .gitignore .
 
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install nodejs 16.13.2
+        uses: actions/setup-node@v2.5.1
+        with:
+          node-version: 16.13.2
+          cache: yarn
+
+      - name: Install yarn dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build site
+        run: yarn build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: site
+          path: out
+
   schema:
     runs-on: ubuntu-20.04
     steps:
@@ -70,3 +93,29 @@ jobs:
         with:
           name: profile-schema
           path: profile-schema.json
+
+  deploy:
+    needs: [typecheck, test, prettier, build, schema]
+    if: success() && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install nodejs 16.13.2
+        uses: actions/setup-node@v2.5.1
+        with:
+          node-version: 16.13.2
+          cache: yarn
+      - name: Install yarn dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Download site
+        uses: actions/download-artifact@v3
+        with:
+          name: site
+          path: out
+
+      - name: Deploy to Firebase
+        run: yarn deploy
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

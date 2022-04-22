@@ -1,0 +1,123 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/profile",
+    "definitions": {
+        "profile": {
+            "type": "object",
+            "properties": {
+                "identity": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "minLength": 2,
+                            "maxLength": 500
+                        },
+                        "birthYear": {
+                            "type": "integer",
+                            "minimum": 1900,
+                            "maximum": 2022
+                        },
+                        "sex": {
+                            "type": "string",
+                            "enum": [
+                                "Male",
+                                "Female",
+                                "Other"
+                            ]
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "birthYear",
+                        "sex"
+                    ],
+                    "additionalProperties": false
+                },
+                "patientHistory": {
+                    "type": "object",
+                    "properties": {
+                        "currentInfectionHistory": {
+                            "type": "string",
+                            "maxLength": 280,
+                            "minLength": 10
+                        },
+                        "pastHistory": {
+                            "$ref": "#/properties/patientHistory/properties/currentInfectionHistory"
+                        },
+                        "otherNotes": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "currentInfectionHistory",
+                        "pastHistory"
+                    ],
+                    "additionalProperties": false
+                },
+                "triageChecklist": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "boolean"
+                    }
+                },
+                "infectionRegions": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "boolean"
+                    }
+                },
+                "attachments": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "mimeType": {
+                                "type": "string",
+                                "enum": [
+                                    "image/png",
+                                    "image/jpeg",
+                                    "video/mp4",
+                                    "video/quicktime"
+                                ]
+                            },
+                            "blob": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    "key": {
+                                        "type": "string",
+                                        "minLength": 44,
+                                        "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+\\/]{3}=)?$",
+                                        "maxLength": 44
+                                    }
+                                },
+                                "required": [
+                                    "id",
+                                    "key"
+                                ],
+                                "additionalProperties": false
+                            }
+                        },
+                        "required": [
+                            "mimeType",
+                            "blob"
+                        ],
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "required": [
+                "identity",
+                "patientHistory",
+                "triageChecklist",
+                "infectionRegions",
+                "attachments"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
