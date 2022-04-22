@@ -3,3 +3,6 @@ node_modules
 *.tsbuildinfo
 out
 **/.firebase
+
+# Sentry
+.sentryclirc

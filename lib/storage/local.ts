@@ -27,8 +27,17 @@ export async function db(): Promise<IDBPDatabase<Schema>> {
         db.createObjectStore("local_profiles");
       },
     });
-    console.log("[local] db:", _db);
+    console.log("[local] IndexedDB initialized");
   }
 
   return _db;
+}
+
+/** Delete all data from IndexedDB */
+export async function nuke() {
+  const tx = (await db()).transaction(["blobs", "local_profiles"], "readwrite");
+
+  // Delete everything
+  await tx.objectStore("blobs").clear();
+  await tx.objectStore("local_profiles").clear();
 }

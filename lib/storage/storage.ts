@@ -37,7 +37,7 @@ export type EarlyHandle = {
  * @param handle The handle to the data, with the ID of its contents, and the key used to decrypt it.
  */
 export async function get(handle: Handle): Promise<ArrayBuffer> {
-  console.log(`Storage.get(id=${handle.id}) key=${handle.key}`);
+  console.log(`Storage.get(id=${handle.id})`);
 
   // Decode and import the key
   const key = await importKey(decodeBase64(handle.key));
