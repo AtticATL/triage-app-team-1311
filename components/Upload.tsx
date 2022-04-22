@@ -56,7 +56,7 @@ export function UploadCaptureVideo({ onUpload }: UploadProps) {
         hidden
         type="file"
         capture="environment"
-        accept="video/mp4"
+        accept="video/mp4,video/quicktime"
         onChange={(e) => {
           Array.from(e.target.files || []).forEach(onUpload);
           e.target.files = null;

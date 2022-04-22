@@ -31,7 +31,16 @@ import {
   FiUploadCloud,
 } from "react-icons/fi";
 import BlobMedia from "./BlobMedia";
-import { Alert, Button, Heading, Pane, Spinner, Text } from "evergreen-ui";
+import {
+  Alert,
+  Button,
+  Heading,
+  IconButton,
+  Pane,
+  Spinner,
+  Text,
+  toaster,
+} from "evergreen-ui";
 import { UploadCapturePhoto, UploadCaptureVideo, UploadFile } from "./Upload";
 
 export interface EditProfileProps {
@@ -85,6 +94,13 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
       }
     }
 
+    // Check the filetype
+    const typeResult = Profile.AttachmentType.safeParse(file.type);
+    if (!typeResult.success) {
+      toaster.danger(`We can't upload a file of this type (${file.type})`);
+      return;
+    }
+
     console.log("[upload] call Storage.put");
     let earlyHandle = await Storage.put(await file.arrayBuffer());
 
@@ -93,7 +109,7 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
       {
         attachment: {
           role: "Other",
-          mimeType: "image/png", // TODO: accurate mime type
+          mimeType: typeResult.data,
           blob: earlyHandle.handle,
         },
         earlyHandle,
@@ -249,26 +265,30 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
         </Entry>
       </Pane>
 
-      <Pane gap={4} display="flex" flexDirection="column">
-        <Heading>Imaging and Attachments</Heading>
-        <Text>
-          Upload photos of CT scans or any other relevant imagery. Quality is
-          not very important here: photos of your computer screen are okay.
-        </Text>
+      <Pane gap={16} display="flex" flexDirection="column">
+        <Pane>
+          <Heading>Imaging and Attachments</Heading>
+          <Text>
+            Upload photos of CT scans or any other relevant imagery. Quality is
+            not very important here: photos of your computer screen are okay.
+          </Text>
+        </Pane>
 
         {uploads.map(({ attachment, earlyHandle }) => (
-          <Entry gap={2} key={attachment.blob.id}>
-            <BlobMedia handle={attachment.blob} />
-            <Pane display="flex" justifyContent="center" alignItems="center">
-              <Button
+          <Entry key={attachment.blob.id}>
+            <BlobMedia attachment={attachment} />
+            <Pane display="flex" justifyContent="flex-end" alignItems="center">
+              <IconButton
+                appearance="minimal"
+                intent="danger"
+                size="large"
                 onClick={() => {
                   setUploads((us) =>
                     us.filter((u) => u.attachment.blob.id != attachment.blob.id)
                   );
                 }}
-              >
-                Remove
-              </Button>
+                icon={FiTrash2}
+              />
             </Pane>
           </Entry>
         ))}

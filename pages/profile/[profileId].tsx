@@ -62,7 +62,7 @@ function ViewProfilePage({ handle }: { handle: Handle }) {
 
   return (
     <ScreenFrame title="Profile">
-      <Pane marginTop={32} display="flex" flexDirection="column" gap={16}>
+      <Pane marginY={32} display="flex" flexDirection="column" gap={16}>
         <Card elevation={1} backgroundColor="white" padding={8}>
           <Heading>Name</Heading>
           <Text fontSize={32} lineHeight={1.5}>
@@ -85,7 +85,7 @@ function ViewProfilePage({ handle }: { handle: Handle }) {
         </Card>
         <Card elevation={1} backgroundColor="white" padding={8}>
           {profile.attachments.map((attachment) => (
-            <BlobMedia key={attachment.blob.id} handle={attachment.blob} />
+            <BlobMedia key={attachment.blob.id} attachment={attachment} />
           ))}
         </Card>
       </Pane>

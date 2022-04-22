@@ -106,23 +106,21 @@ export const Handle = z.object({
 export type Handle = Readonly<z.infer<typeof Handle>>;
 
 /**
- * Attachment role (CT Scan, etc)
- */
-export const AttachmentRole = z.enum(["CtScan", "Other"]);
-export type AttachmentRole = z.infer<typeof AttachmentRole>;
-
-/**
  * MIME content types we understand
  */
-export const MimeType = z.enum(["image/png", "image/jpeg"]);
-export type MimeType = z.infer<typeof MimeType>;
+export const AttachmentType = z.enum([
+  "image/png",
+  "image/jpeg",
+  "video/mp4",
+  "video/quicktime",
+]);
+export type AttachmentType = z.infer<typeof AttachmentType>;
 
 /**
  * Media or file attachment
  */
 export const Attachment = z.object({
-  role: AttachmentRole,
-  mimeType: MimeType,
+  mimeType: AttachmentType,
   blob: Handle,
 });
 export type Attachment = z.infer<typeof Attachment>;

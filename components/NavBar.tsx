@@ -3,6 +3,7 @@ import css from "styled-jsx/css";
 import * as React from "react";
 import { FiChevronLeft } from "react-icons/fi";
 import Container from "./Container";
+import { StackingOrder } from "evergreen-ui";
 import { outline } from "../colors";
 
 export interface NavBarProps {
@@ -42,7 +43,7 @@ export default function NavBar({ title }: NavBarProps) {
         }
 
         .bar {
-          z-index: 500;
+          z-index: ${StackingOrder.OVERLAY + 1};
           position: fixed;
           width: 100%;
           height: var(--height);
