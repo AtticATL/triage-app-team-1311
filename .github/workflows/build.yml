@@ -67,6 +67,7 @@ jobs:
       - name: Build site
         run: yarn build
         env:
+          SENTRY_DO_RELEASE: true
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Upload artifact
