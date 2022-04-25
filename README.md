@@ -2,37 +2,82 @@
 
 Webapp to help transfer patients with odontogenic infections.
 
-## Getting Started
+## Running the app locally
 
-To build the webapp, you need:
+To build and run the webapp locally, you will need:
 
-- [Node.js](https://nodejs.org/en/download/) version 16 (not 17)
+- [Node.js](https://nodejs.org/en/download/) version 16 or above
 - `yarn` (can be installed with `npm install --global yarn`)
 
 Then, to run the webapp locally for testing:
 
 ```sh
-# Install dependencies
+# Install all dependencies (listed in `yarn.lock`)
 $ yarn install
 
-# Build the webapp into a dev environment
+# Start a dev server on http://localhost:3000
 $ yarn dev
+
+# Then, open http://localhost:3000 in a browser to see the running app.
 ```
 
+Next.js supports hot-reloading, so every time you save a file with a code change, you should see the change appear within a few seconds on your device without a reload.
 
-This will print out a url into your terminal leading to a locally hosted website. Opening this link on your device or will open to the webapp.
+## Deploying the app to Firebase
 
-Next.js supports hot-reloading, so every time you save a file with a code change, you should see it within a few seconds on your device. 
+The app is deployed with Firebase. We use Firebase Hosting, Firestore, and Firebase Cloud Storage. Keys have been included (in `./lib/firebase.ts`) that identify the app with our public Firebase account.
+
+To deploy the app:
+
+```sh
+# Build the app (static site generated and stored in `./out`)
+$ yarn build
+
+# Log in to Firebase
+$ firebase login
+
+# Deploy the app to Firebase
+$ firebase deploy
+```
+
+After `firebase deploy` finishes, the app has been deployed---new pageloads will see any new functionality, and any updates to the Firestore or Cloud Storage security rules have been applied.
+
+If you want to deploy the app into a different Firebase account, you'll need to do the following:
+
+- [Create a new Firebase project](https://console.firebase.google.com), and take note of its ID.
+  - Update the `.firebaserc` file, changing `projects.default` to the ID of your new project.
+  - Update the `firebase.json` file, changing `hosting.site` to the ID of your new project.
+- Go to Project Settings in the Firebase console, and add a new Web app.
+  - Copy the configuration it generates (`const firebaseConfig = {...}`) into `./lib/firebase.ts`
+- Run `firebase login`, signing into the account you used to make the new project
+  - Additionally, install the Google Cloud SDK, sign in with `gcloud auth login`, and run `gcloud config set project $ID_OF_YOUR_NEW_FIREBASE_PROJECT`.
+- Run `yarn build` to build the site
+- Run `firebase deploy`. This will deploy the site to Firebase Hosting, and configure security rules for Firestore and Cloud Storage
+- Run `./firebase/apply-cors.sh`, which will configure the CORS policy for our Cloud Storage bucket.
+
+At this point, you should be able to load `https://$YOUR_PROJECT_ID.firebaseapp.com/`, and see a fully functioning app, served from Firebase.
+
+## Troubleshooting
+
+**The site is much slower running locally than it is on the website!** This is because React and Next.js are running in development mode---scripts aren't minified, and in some cases, React will do extra work to check the validity of the app's code. To see a local preview with similar performance to the deployed app, run a `yarn build`, then start a local webserver pointed to the `./out` directory.
+
+**I see something like `/bin/sh: 1: next: not found` when I try to start the dev server!** This is because you didn't install dependencies first---run `yarn install`, and then try running `yarn dev` again.
+
+**Why does the data look corrupted when I open it from the Firebase console?** This is by design---any data uploaded to Firebase has been encrypted with keys that are only stored in the browser's local storage. It's impossible to view any of the data that has been uploaded.
+
+**I changed the icon for the app---why does it not appear on my phone?** If you change the icon, you also need to update the Web App Manifest (in `./public/manifest.json`) and any relevant meta tags (in `./pages/_app.tsx`).
+
+**I tried to add a field to the form, but it's not working---something about a ZodType. What's going on?** Form fields in the app are validated by a [zod](https://github.com/colinhacks/zod) schema, in `./lib/profile.ts`. To add a field, you first need to define the validation rules for it in the schema. Then, you can add a component from `Form.tsx`, referencing the field you just made.
+
+**My editor is putting red squiggly lines under everything. Why?** We're using TypeScript for this project. If your code does not typecheck, your editor will probably display this as an error. To fix this, make sure your code is properly type-annotated.
 
 ## Development
 
-We're using the [Next.js](https://nextjs.org/docs) framework for [React](https://reactjs.org/docs/getting-started.html). 
+We're using the [Next.js](https://nextjs.org/docs) framework for [React](https://reactjs.org/docs/getting-started.html).
 
 The app is written in [TypeScript](https://expo.dev/client): a dialect of JavaScript with type annotations and type checking. To run the type checker in the background, run `yarn tsc --watch`.
 
 All code is auto-formatted with [Prettier](https://prettier.io). Code formatting is also enforced in CI. It's a good idea to set up your editor to format code on save, so you don't have to worry about this. To format your code, run `yarn prettier`.
-
-We use the [Jest](https://jestjs.io) test framework for testing. Please write tests for anything that's easily testable. To run the test suite in the background, run `yarn test`.
 
 ## CI (GitHub Actions)
 
