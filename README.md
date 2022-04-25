@@ -1,4 +1,4 @@
-# OI TriageApp
+# TransferApp
 
 Webapp to help transfer patients with odontogenic infections.
 
