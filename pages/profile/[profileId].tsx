@@ -10,6 +10,10 @@ import { useStoredObject } from "../../lib/storage/storage";
 import { useState } from "react";
 import { Text, Heading, Pane, Spinner, Card, Paragraph } from "evergreen-ui";
 import BlobMedia from "../../components/BlobMedia";
+import Checkbox from "../../components/Checkbox";
+import { CHECKLIST, QUESTIONS } from "../../lib/triageQuestions";
+import { Entry } from "../../components/Form";
+import { REGIONAREAS, REGIONS } from "../../lib/injuryRegions";
 
 const Params = z.object({
   query: z.object({
@@ -84,6 +88,33 @@ function ViewProfilePage({ handle }: { handle: Handle }) {
           <Paragraph>{profile.patientHistory.otherNotes}</Paragraph>
         </Card>
         <Card elevation={1} backgroundColor="white" padding={8}>
+          <Heading marginTop={16}>Triage Checklist</Heading>
+            <Entry>
+              {CHECKLIST.map((id) => (
+                <Checkbox
+                  key={id}
+                  checked={profile.triageChecklist[id]}
+                  label={QUESTIONS[id].text}
+                  onChange={(v) => (null)}
+                />
+              ))}
+            </Entry>
+          <Heading marginTop={16}>Infection Regions</Heading>
+            <Entry>
+                {REGIONS.map((id) => (
+                  <Checkbox
+                    key={id}
+                    checked={profile.infectionRegions[id]}
+                    label={REGIONAREAS[id].text}
+                    onChange={(v) => (null)}
+                  />
+                ))}
+            </Entry>
+        </Card>
+        <Card elevation={1} backgroundColor="white" padding={8}>
+          <Heading marginTop={16}>Attachments</Heading>
+          {profile.attachments.length == 0  && <Text>Profile has no attachments.</Text>}
+          
           {profile.attachments.map((attachment) => (
             <BlobMedia key={attachment.blob.id} attachment={attachment} />
           ))}
