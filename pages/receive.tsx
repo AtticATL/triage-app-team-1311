@@ -1,4 +1,4 @@
-import { Text, Button, Heading, Pane, Paragraph } from "evergreen-ui";
+import { Text, Button, Heading, Pane, Paragraph, toaster } from "evergreen-ui";
 import ScreenFrame from "../components/ScreenFrame";
 import { z } from "zod";
 import { TextField, useField } from "../components/Form";
@@ -10,6 +10,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { exportKey } from "../lib/storage/crypto";
 import { encodeHex } from "../lib/storage/encoding";
 import { useRouter } from "next/router";
+import { putLocalProfile } from "../lib/storage/localProfileStorage";
 
 const PinText = z
   .string()
@@ -58,7 +59,7 @@ export default function Receive() {
     }
 
     // Compute the ident key
-    setStatus("Decrypting PIN...");
+    setStatus("Checking PIN...");
     const indexKey = (await p.keys()).identKey;
     const ident = encodeHex(await exportKey(indexKey));
 
@@ -66,20 +67,35 @@ export default function Receive() {
     setStatus("Fetching profile metadata...");
     const ref = doc(db, "pins", ident);
     const stored = (await getDoc(ref)).data();
-    console.log({ stored });
+
+    if (typeof stored == "undefined") {
+      toaster.danger("No profile found with this PIN", {
+        description: "Check that you typed in the PIN correctly",
+      });
+      setStatus(null);
+      setWorking(false);
+      return;
+    }
 
     let pph;
     const pphParsed = PinProtectedHandle.safeParse(stored);
     if (pphParsed.success) {
       pph = pphParsed.data;
     } else {
-      setStatus("Stored PIN code information is invalid.");
+      toaster.danger("We found the profile, but the data was invalid.", {
+        description: "Try transferring with a URL or QR code instead.",
+      });
+      setStatus(null);
       setWorking(false);
       return;
     }
 
     // Wrap the profile handle with the PIN
+    setStatus("Decrypting profile...");
     const handle = await p.unwrapHandle(pph);
+
+    // Add the profile to the history list
+    await putLocalProfile(handle);
 
     router.push(`/profile/${handle.id}#${handle.key}`);
   };
