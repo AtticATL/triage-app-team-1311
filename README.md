@@ -49,10 +49,10 @@ Every time code is pushed, we run the following:
 
 #### Features
 
-- Reworked app into a webapp running on the Next.js framework for React
-- New buttons on recent profiles on home screen to delete profiles
-- Added video attachment functionality
-- New buttons on profile create screen for directly accessing device camera for attachments
+- App reworked into a webapp running on the Next.js framework for React
+- Buttons on recent profiles on home screen to delete profiles
+- Video attachment functionality
+- Buttons on profile create screen for directly accessing device camera for attachments
 - Redesigned and polished UI
 - Overhauled share button with new QR code and PIN fucntionality
 - Functional end-to-end encryption of all patient data
