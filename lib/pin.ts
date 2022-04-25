@@ -53,14 +53,14 @@ export class Pin {
 
     // Make sure the PIN is the right length
     if (pinString.length != PIN_DIGITS) {
-      return { is: "err", issue: `Code is not ${PIN_DIGITS} digits long` };
+      return { is: "err", issue: `PIN is not ${PIN_DIGITS} digits long` };
     }
 
     // Make sure the checksum is valid
     if (!damm.validate(pinString)) {
       return {
         is: "err",
-        issue: `Invalid code: check for swapped or incorrect digits`,
+        issue: `Invalid PIN: check for swapped or incorrect digits`,
       };
     }
 

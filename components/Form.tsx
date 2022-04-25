@@ -38,8 +38,11 @@ export function TextField<Z extends ZodType<string | undefined>>({
   field,
   label,
   help,
+  inputMode,
   ...rest
-}: FieldProps<Z>) {
+}: FieldProps<Z> & {
+  inputMode?: React.HTMLProps<typeof HTMLInputElement>["inputMode"];
+}) {
   // Track whether the user has submitted this field before
   let [dirty, setDirty] = useState(false);
   let clean = !dirty && field.value === "";
@@ -55,6 +58,7 @@ export function TextField<Z extends ZodType<string | undefined>>({
           type="text"
           value={field.value || ""}
           onChange={field.setValue}
+          inputMode={inputMode}
           onBlur={() => {
             setDirty(true);
 
