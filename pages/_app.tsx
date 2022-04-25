@@ -23,6 +23,14 @@ function MyApp({ Component, pageProps }: AppProps) {
           name="viewport"
           content="viewport-fit=cover,user-scalable=no,width=device-width,initial-scale=1,maximum-scale=1"
         />
+        <link rel="icon" type="image/png" sizes="256x256" href="/favicon-256.png" />
+        <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128.png" />
+        <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="icons/icon-114.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="72x72"  href="icons/icon-72.png" />
+        <link rel="shortcut icon" type="image/png" href="/favicon.ico" />
+        <link rel="icon" sizes="174x174" href="favicon.icns"/>
+
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="theme-color" content="white" />
