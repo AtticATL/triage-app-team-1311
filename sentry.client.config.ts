@@ -46,8 +46,6 @@ Sentry.addGlobalEventProcessor((event: SentryEvent) => {
     // @ts-ignore 'fragment' is documented, but not in the types
     delete event.request?.fragment;
   }
-
-  console.info("Sentry report", event);
   return event;
 });
 
