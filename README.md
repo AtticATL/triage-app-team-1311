@@ -1,32 +1,32 @@
 # OI TriageApp
 
-App to help transfer patients with odontogenic infections.
+Webapp to help transfer patients with odontogenic infections.
 
 ## Getting Started
 
-To build the app, you need:
+To build the webapp, you need:
 
 - [Node.js](https://nodejs.org/en/download/) version 16 (not 17)
 - `yarn` (can be installed with `npm install --global yarn`)
-- [Expo Go](https://expo.dev/client) app on your test device
 
-Then, to run the app in Expo Go:
+Then, to run the webapp locally for testing:
 
 ```sh
 # Install dependencies
 $ yarn install
 
-# Build the app
-$ yarn start
+# Build the webapp into a dev environment
+$ yarn dev
 ```
 
-This will open a page in your browser with a QR code. Scan that code with your phone, and Expo Go will open, trigger a build of the app for the right platform, and start the app.
 
-Expo supports hot-reloading, so every time you save a file with a code change, you should see it within a few seconds on your phone. If that doesn't work, shake your phone, and hit "Refresh" on the developer menu.
+This will print out a url into your terminal leading to a locally hosted website. Opening this link on your device or will open to the webapp.
+
+Next.js supports hot-reloading, so every time you save a file with a code change, you should see it within a few seconds on your device. 
 
 ## Development
 
-We're using the [Expo](https://docs.expo.dev) framework for [React Native](https://reactnative.dev). We're also using [NativeBase](https://nativebase.io), a component library for React Native, to make building good UIs a little easier. To start the app, run `yarn start`.
+We're using the [Next.js](https://nextjs.org/docs) framework for [React](https://reactjs.org/docs/getting-started.html). 
 
 The app is written in [TypeScript](https://expo.dev/client): a dialect of JavaScript with type annotations and type checking. To run the type checker in the background, run `yarn tsc --watch`.
 
@@ -44,6 +44,27 @@ Every time code is pushed, we run the following:
 - **Schema generation**: generate a [JSON-schema](https://json-schema.org) for the profile data.
 
 ## Release Notes
+
+### Sprint 5: `v0.5.0`
+
+#### Features
+
+- Reworked app into a webapp running on the Next.js framework for React
+- New buttons on recent profiles on home screen to delete profiles
+- Added video attachment functionality
+- New buttons on profile create screen for directly accessing device camera for attachments
+- Redesigned and polished UI
+- Overhauled share button with new QR code and PIN fucntionality
+- Functional end-to-end encryption of all patient data
+
+#### Bug Fixes
+
+- Optimized performance of webapp
+- Fixed bug where image attachments would be corrupted
+
+#### Known Issues
+
+- Required fields popup in create profile screen doesn't correctly identify what is required
 
 ### Sprint 4: `v0.4.0`
 
