@@ -1,8 +1,14 @@
-// Re-export the base64 encoding utils from base64-arraybuffer
+// Re-export the base64 encoding utils
 export {
-  encode as encodeBase64,
-  decode as decodeBase64,
-} from "base64-arraybuffer";
+  Encode as encodeBase64,
+  Decode as decodeBase64,
+} from "arraybuffer-encoding/base64/standard";
+
+// Re-export the hex encoding utils
+export {
+  Encode as encodeHex,
+  Decode as decodeHex,
+} from "arraybuffer-encoding/hex";
 
 /**
  * Most operations can take either the buffer allocation itself (ArrayBuffer), or

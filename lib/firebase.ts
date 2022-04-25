@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 import { getAuth, signInAnonymously } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 // TODO: Add SDKs for Firebase products that you want to use
 
@@ -21,6 +22,7 @@ const app = initializeApp(firebaseConfig);
 export default app;
 export const storage = getStorage(app);
 export const auth = getAuth(app);
+export const db = getFirestore(app);
 
 /** Sign in to an anomymous user */
 export async function login() {

@@ -1,21 +1,19 @@
+import { Pane } from "evergreen-ui";
 import * as React from "react";
 
-export interface ContainerProps {
-  children: React.ReactNode;
-}
-
-export default function Container({ children }: ContainerProps) {
+export default function Container({
+  children,
+  ...rest
+}: React.ComponentProps<typeof Pane>) {
   return (
-    <div>
-      <style jsx>{`
-        div {
-          position: relative;
-          max-width: 800px;
-          padding: 0 16px;
-          margin: 0 auto;
-        }
-      `}</style>
+    <Pane
+      position="relative"
+      maxWidth={800}
+      paddingX={16}
+      marginX="auto"
+      {...rest}
+    >
       {children}
-    </div>
+    </Pane>
   );
 }

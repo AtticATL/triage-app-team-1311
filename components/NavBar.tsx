@@ -43,7 +43,7 @@ export default function NavBar({ title }: NavBarProps) {
         }
 
         .bar {
-          z-index: ${StackingOrder.OVERLAY + 1};
+          z-index: ${StackingOrder.OVERLAY - 1};
           position: fixed;
           width: 100%;
           height: var(--height);

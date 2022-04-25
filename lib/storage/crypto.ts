@@ -137,11 +137,11 @@ export async function generateDecimalPin(digits: number): Promise<bigint> {
   // Generate a 64-bit uint of random data, read as much of it as we can as an integer
   const bytes = new Uint8Array(8);
   crypto.getRandomValues(bytes);
-  const randNum = bytesToUint64(bytes);
+  const randNum: bigint = bytesToUint64(bytes);
 
   // Cap the length of the pin to respect the number of digits
-  const maxPin = 10n ** BigInt(digits) - 1n;
-  const pin = randNum % maxPin;
+  const maxPin: bigint = 10n ** BigInt(digits) - 1n;
+  const pin: bigint = randNum % maxPin;
 
   return pin;
 }
