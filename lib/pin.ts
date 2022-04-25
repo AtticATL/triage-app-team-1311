@@ -72,7 +72,11 @@ export class Pin {
 
   /** Display the PIN and its checksum as a string */
   public toString(): string {
-    return `${this.pin}${this.checksum()}`;
+    const pinPart = this.pin.toString().padStart(PIN_KEY_DIGITS, "0");
+    const checksumPart = this.checksum()
+      .toString()
+      .padStart(PIN_CHECKSUM_DIGITS, "0");
+    return `${pinPart}${checksumPart}`;
   }
 
   /** Compute a checksum for the generated PIN */
