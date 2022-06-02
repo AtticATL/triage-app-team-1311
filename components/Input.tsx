@@ -29,6 +29,7 @@ export default function Input({
         {`
           input {
             font-size: inherit;
+            font-family: inherit;
             border: none;
             border-bottom: 1px solid ${outline};
             padding: 4px 0;

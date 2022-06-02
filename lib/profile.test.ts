@@ -1,16 +1,15 @@
 import * as Profile from "./profile";
 
-describe("birth year", () => {
+describe("date string", () => {
   it("accepts valid data", () => {
-    Profile.BirthYear.parse(2001);
-    Profile.BirthYear.parse(1900);
-    Profile.BirthYear.parse(2022);
-    Profile.BirthYear.parse(new Date().getFullYear());
+    Profile.DateStr.parse("2022-01-01");
+    Profile.DateStr.parse("2001-09-02");
+    Profile.DateStr.parse("2005-05-05");
   });
   it("rejects invalid data", () => {
-    expect(() => Profile.BirthYear.parse(9999)).toThrow();
-    expect(() => Profile.BirthYear.parse(21)).toThrow();
-    expect(() => Profile.BirthYear.parse(2.5)).toThrow();
+    expect(() => Profile.DateStr.parse("1234")).toThrow();
+    expect(() => Profile.DateStr.parse("1234-4-4")).toThrow();
+    expect(() => Profile.DateStr.parse("")).toThrow();
   });
 });
 

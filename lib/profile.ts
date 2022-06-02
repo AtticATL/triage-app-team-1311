@@ -2,19 +2,10 @@ import { boolean, z } from "zod"; // data validation library
 import { REGIONAREAS, REGIONS } from "./injuryRegions";
 import { Question, QUESTIONS } from "./triageQuestions";
 
-const currentYear = new Date().getFullYear();
-
-/**
- * The year a patient was born
- */
-export const BirthYear = z
-  .number()
-  .int()
-  .gte(1900, { message: "Birth year must be after 1900" })
-  .lte(currentYear, {
-    message: `Birth year cannot be after the current year (${currentYear})`,
-  });
-export type BirthYear = z.infer<typeof BirthYear>;
+export const DateStr = z.string().regex(/[0-9]{4}-[0-9]{2}-[0-9]{2}/, {
+  message: "Date must be valid (yyyy-mm-dd format)",
+});
+export type DateStr = z.infer<typeof DateStr>;
 
 /**
  * A patient's full name
@@ -47,7 +38,7 @@ export type Base64String = z.infer<typeof Base64String>;
  */
 export const Identity = z.object({
   name: Name,
-  birthYear: BirthYear,
+  dob: DateStr,
   sex: Sex,
 });
 export type Identity = z.infer<typeof Identity>;

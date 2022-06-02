@@ -134,7 +134,8 @@ function ProfileCard({ profile: stored }: { profile: StoredProfileRef }) {
               <Text>{profile.identity.sex}</Text>
               <Text marginX={8}>{"·"}</Text>
               <Text>
-                {new Date().getFullYear() - profile.identity.birthYear}
+                {new Date().getFullYear() -
+                  new Date(profile.identity.dob).getFullYear()}
               </Text>
             </Pane>
           </Pane>

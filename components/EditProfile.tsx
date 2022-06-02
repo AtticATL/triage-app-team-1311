@@ -19,6 +19,7 @@ import {
   TextField,
   EnumField,
   NumberField,
+  DateField,
   ParagraphField,
   Entry,
 } from "../components/Form";
@@ -56,7 +57,7 @@ export interface EditProfileProps {
 export default function EditProfile({ initial, onChange }: EditProfileProps) {
   // Keep track of the state of the profile fields
   const name = useField(Profile.Name, initial?.identity?.name);
-  const birthYear = useField(Profile.BirthYear, initial?.identity?.birthYear);
+  const dob = useField(Profile.DateStr, initial?.identity?.dob);
   const sex = useField(Profile.Sex, initial?.identity?.sex);
   const currentInfectionHistory = useField(
     Profile.Paragraph,
@@ -151,7 +152,7 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
     const draftProfile: z.infer<typeof partialProfileValidator> = {
       identity: {
         name: name.value,
-        birthYear: birthYear.value,
+        dob: dob.value,
         sex: sex.value,
       },
       triageChecklist: answers,
@@ -167,7 +168,7 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
     return Profile.Profile.safeParse(draftProfile);
   }, [
     name.value,
-    birthYear.value,
+    dob.value,
     sex.value,
     currentInfectionHistory.value,
     pastHistory.value,
@@ -199,7 +200,7 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
           label="Sex"
           help="The patient's sex, as assigned at birth"
         />
-        <NumberField field={birthYear} label="Birth Year" />
+        <DateField field={dob} label="Date of Birth" />
       </Pane>
 
       <Pane display="flex" flexDirection="column" gap={16}>

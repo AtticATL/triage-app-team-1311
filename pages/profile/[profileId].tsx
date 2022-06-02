@@ -108,8 +108,8 @@ function ViewProfilePage({ handle }: { handle: Handle }) {
                 <Text>{profile.identity.sex}</Text>
               </Pane>
               <Pane>
-                <Heading marginTop={16}>Birth year</Heading>
-                <Text>{profile.identity.birthYear}</Text>
+                <Heading marginTop={16}>Date of Birth</Heading>
+                <Text>{profile.identity.dob}</Text>
               </Pane>
               <Button
                 marginLeft="auto"

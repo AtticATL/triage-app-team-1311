@@ -76,6 +76,53 @@ export function TextField<Z extends ZodType<string | undefined>>({
   );
 }
 
+export function DateField<Z extends ZodType<string | undefined>>({
+  field,
+  label,
+  help,
+  inputMode,
+  ...rest
+}: FieldProps<Z> & {
+  inputMode?: React.HTMLProps<typeof HTMLInputElement>["inputMode"];
+}) {
+  // Track whether the user has submitted this field before
+  let [dirty, setDirty] = useState(false);
+  let clean = !dirty && field.value === "";
+
+  // Track input validation problems.
+  let zodResult = field.validator.safeParse(field.value);
+  let issues = zodResult.success ? [] : zodResult.error.issues;
+
+  return (
+    <Entry>
+      <Label label={label}>
+        <Input
+          type="date"
+          value={field.value || ""}
+          onChange={field.setValue}
+          inputMode={inputMode}
+          onBlur={() => {
+            setDirty(true);
+
+            // Remove whitespace around, and null out of empty.
+            let trimmed = field.value && field.value.trim();
+            let nulled = trimmed || undefined;
+            field.setValue(nulled);
+          }}
+        />
+        {dirty &&
+          issues.map((issue, i) => <Error key={i}>{issue.message}</Error>)}
+        {help && <HelpText>{help}</HelpText>}
+        <style jsx>{`
+          input {
+            font-family: inherit;
+          }
+        `}</style>
+      </Label>
+    </Entry>
+  );
+}
+
 export function EnumField<Z extends ZodEnum<any>>({
   field,
   label,
