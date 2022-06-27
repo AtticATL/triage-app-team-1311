@@ -54,19 +54,19 @@ describe("patient identity", () => {
   it("accepts valid data", () => {
     Profile.Identity.parse({
       name: "Example Person",
-      birthYear: 1986,
+      dob: "1986-06-21",
       sex: "Other",
     });
 
     Profile.Identity.parse({
       name: "Another Example",
-      birthYear: 2002,
+      dob: "2002-06-21",
       sex: "Female",
     });
 
     Profile.Identity.parse({
       name: "Yet Another Example",
-      birthYear: 2022,
+      dob: "2022-06-21",
       sex: "Male",
     });
   });
@@ -78,7 +78,7 @@ describe("patient identity", () => {
     expect(() =>
       Profile.Identity.parse({
         name: "Not Actually Twenty-One",
-        birthYear: 21,
+        dob: "21-06-21",
         sex: "Male",
       })
     ).toThrow();
@@ -86,7 +86,7 @@ describe("patient identity", () => {
     expect(() =>
       Profile.Identity.parse({
         name: "Sexless",
-        birthYear: 2001,
+        dob: 2001,
       })
     ).toThrow();
   });
@@ -169,7 +169,7 @@ describe("patient profile", () => {
     Profile.Profile.parse({
       identity: {
         name: "Some Fake Person",
-        birthYear: 1981,
+        dob: "1621-06-21",
         sex: "Female",
       },
       patientHistory: {

@@ -4,6 +4,7 @@ node_modules
 *.tsbuildinfo
 out
 **/.firebase
+.vscode
 
 # Sentry
 .sentryclirc

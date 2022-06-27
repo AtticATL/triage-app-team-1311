@@ -8,6 +8,8 @@ import {
 } from "../lib/triageQuestions";
 import {
   FALSE_REGION_SECTIONS,
+  MANDIBULAR,
+  MAXILLARY,
   REGIONAREAS,
   REGIONS,
 } from "../lib/injuryRegions";
@@ -23,6 +25,13 @@ import {
   ParagraphField,
   Entry,
 } from "../components/Form";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionItemHeading,
+  AccordionItemButton,
+  AccordionItemPanel,
+} from "react-accessible-accordion";
 import Checkbox from "../components/Checkbox";
 import {
   FiAlertTriangle,
@@ -254,16 +263,42 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
           odontogenic injury.
         </Text>
 
-        <Entry>
-          {REGIONS.map((id) => (
-            <Checkbox
-              key={id}
-              checked={regions[id]}
-              label={REGIONAREAS[id].text}
-              onChange={(v) => setRegions((a) => ({ ...a, [id]: v }))}
-            />
-          ))}
-        </Entry>
+        <Accordion allowZeroExpanded={true} allowMultipleExpanded={true}>
+          <AccordionItem>
+            <AccordionItemHeading>
+              <AccordionItemButton>Mandibular Spaces</AccordionItemButton>
+            </AccordionItemHeading>
+            <AccordionItemPanel>
+              <Entry>
+                {MANDIBULAR.map((id) => (
+                  <Checkbox
+                    key={id}
+                    checked={regions[id]}
+                    label={REGIONAREAS[id].text}
+                    onChange={(v) => setRegions((a) => ({ ...a, [id]: v }))}
+                  />
+                ))}
+              </Entry>
+            </AccordionItemPanel>
+          </AccordionItem>
+          <AccordionItem>
+            <AccordionItemHeading>
+              <AccordionItemButton>Maxillary Spaces</AccordionItemButton>
+            </AccordionItemHeading>
+            <AccordionItemPanel>
+              <Entry>
+                {MAXILLARY.map((id) => (
+                  <Checkbox
+                    key={id}
+                    checked={regions[id]}
+                    label={REGIONAREAS[id].text}
+                    onChange={(v) => setRegions((a) => ({ ...a, [id]: v }))}
+                  />
+                ))}
+              </Entry>
+            </AccordionItemPanel>
+          </AccordionItem>
+        </Accordion>
       </Pane>
 
       <Pane gap={16} display="flex" flexDirection="column">
