@@ -26,12 +26,7 @@ import BlobMedia from "../../components/BlobMedia";
 import Checkbox from "../../components/Checkbox";
 import { CHECKLIST, QUESTIONS } from "../../lib/triageQuestions";
 import { Entry } from "../../components/Form";
-import {
-  ALLREGIONS,
-  MANDIBULAR,
-  REGIONAREAS,
-  REGIONS,
-} from "../../lib/injuryRegions";
+import { ALLREGIONS, MANDIBULAR, REGIONAREAS } from "../../lib/injuryRegions";
 import { FiCopy, FiSend, FiShare } from "react-icons/fi";
 import Container from "../../components/Container";
 import QRCode from "react-qr-code";

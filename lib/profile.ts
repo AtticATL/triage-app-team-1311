@@ -1,5 +1,5 @@
 import { boolean, z } from "zod"; // data validation library
-import { REGIONAREAS, REGIONS } from "./injuryRegions";
+import { REGIONAREAS } from "./injuryRegions";
 import { Question, QUESTIONS } from "./triageQuestions";
 
 export const DateStr = z.string().regex(/[0-9]{4}-[0-9]{2}-[0-9]{2}/, {

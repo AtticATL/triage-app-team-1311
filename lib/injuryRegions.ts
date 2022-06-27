@@ -92,7 +92,7 @@ export const ALLREGIONS: Array<keyof typeof REGIONAREAS> = [
 ];
 
 /**
- * A default-false record for every region in REGIONS
+ * A default-false record for every region
  */
 export const FALSE_REGION_SECTIONS = Object.freeze(
   ALLREGIONS.map((k) => ({
