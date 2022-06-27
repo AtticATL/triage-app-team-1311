@@ -11,7 +11,6 @@ import {
   MANDIBULAR,
   MAXILLARY,
   REGIONAREAS,
-  REGIONS,
 } from "../lib/injuryRegions";
 import * as Storage from "../lib/storage/storage";
 import { decodeBase64 } from "../lib/storage/encoding";
