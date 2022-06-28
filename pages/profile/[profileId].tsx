@@ -26,7 +26,12 @@ import BlobMedia from "../../components/BlobMedia";
 import Checkbox from "../../components/Checkbox";
 import { CHECKLIST, QUESTIONS } from "../../lib/triageQuestions";
 import { Entry } from "../../components/Form";
-import { ALLREGIONS, MANDIBULAR, REGIONAREAS } from "../../lib/injuryRegions";
+import {
+  ALLREGIONS,
+  MANDIBULAR,
+  MAXILLARY,
+  REGIONAREAS,
+} from "../../lib/injuryRegions";
 import { FiCopy, FiSend, FiShare } from "react-icons/fi";
 import Container from "../../components/Container";
 import QRCode from "react-qr-code";
@@ -84,6 +89,18 @@ function ViewProfilePage({ handle }: { handle: Handle }) {
       </ScreenFrame>
     );
   }
+
+  const patientTriages = CHECKLIST.filter(function (id) {
+    return profile.triageChecklist[id];
+  });
+
+  const patientMaxillaryRegions = MAXILLARY.filter(function (id) {
+    return profile.infectionRegions[id];
+  });
+
+  const patientMandibularRegions = MANDIBULAR.filter(function (id) {
+    return profile.infectionRegions[id];
+  });
 
   return (
     <>
@@ -147,27 +164,60 @@ function ViewProfilePage({ handle }: { handle: Handle }) {
             <Pane>
               <Heading>Triage Checklist</Heading>
               <Entry>
-                {CHECKLIST.map((id) => (
-                  <Checkbox
-                    key={id}
-                    checked={profile.triageChecklist[id]}
-                    label={QUESTIONS[id].text}
-                    onChange={(v) => null}
-                  />
-                ))}
+                {patientTriages.length ? (
+                  patientTriages.map((id) => (
+                    <Checkbox
+                      key={id}
+                      checked={profile.triageChecklist[id]}
+                      label={QUESTIONS[id].text}
+                      onChange={(v) => null}
+                    />
+                  ))
+                ) : (
+                  <Text>No items selected.</Text>
+                )}
               </Entry>
             </Pane>
+          </Card>
+          <Card
+            elevation={0}
+            backgroundColor="white"
+            padding={16}
+            display="flex"
+            flexDirection="column"
+            gap={8}
+          >
             <Pane>
               <Heading>Infection Regions</Heading>
+              <Heading marginTop={20}>Mandibular</Heading>
               <Entry>
-                {ALLREGIONS.map((id) => (
-                  <Checkbox
-                    key={id}
-                    checked={profile.infectionRegions[id]}
-                    label={REGIONAREAS[id].text}
-                    onChange={(v) => null}
-                  />
-                ))}
+                {patientMandibularRegions.length ? (
+                  patientMandibularRegions.map((id) => (
+                    <Checkbox
+                      key={id}
+                      checked={profile.infectionRegions[id]}
+                      label={REGIONAREAS[id].text}
+                      onChange={(v) => null}
+                    />
+                  ))
+                ) : (
+                  <Text>No regions selected.</Text>
+                )}
+              </Entry>
+              <Heading>Maxillary</Heading>
+              <Entry>
+                {patientMaxillaryRegions.length ? (
+                  patientMaxillaryRegions.map((id) => (
+                    <Checkbox
+                      key={id}
+                      checked={profile.infectionRegions[id]}
+                      label={REGIONAREAS[id].text}
+                      onChange={(v) => null}
+                    />
+                  ))
+                ) : (
+                  <Text>No regions selected.</Text>
+                )}
               </Entry>
             </Pane>
           </Card>
