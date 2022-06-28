@@ -30,11 +30,15 @@ import {
   AccordionItemHeading,
   AccordionItemButton,
   AccordionItemPanel,
+  AccordionItemState,
 } from "react-accessible-accordion";
 import Checkbox from "../components/Checkbox";
 import {
   FiAlertTriangle,
   FiArrowRight,
+  FiChevronDown,
+  FiChevronLeft,
+  FiChevronUp,
   FiTrash2,
   FiUpload,
   FiUploadCloud,
@@ -240,7 +244,7 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
         <Heading>Triage Checklist</Heading>
         <Text>
           Answers to these questions can help determine the severity of this
-          {"patient's"} case.
+          {" patient's "} case.
         </Text>
 
         <Entry>
@@ -255,48 +259,85 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
         </Entry>
       </Pane>
 
-      <Pane gap={4}>
+      <Pane gap={4} display="flex" flexDirection="column">
         <Heading>Infection Regions</Heading>
         <Text>
-          Designate the affected regions of the face for the {"patient's"}
+          Designate the affected regions of the face for the {" patient's "}
           odontogenic injury.
         </Text>
-
+        <Pane gap={16} display="flex" flexDirection="column"></Pane>
         <Accordion allowZeroExpanded={true} allowMultipleExpanded={true}>
-          <AccordionItem>
-            <AccordionItemHeading>
-              <AccordionItemButton>Mandibular Spaces</AccordionItemButton>
-            </AccordionItemHeading>
-            <AccordionItemPanel>
-              <Entry>
-                {MANDIBULAR.map((id) => (
-                  <Checkbox
-                    key={id}
-                    checked={regions[id]}
-                    label={REGIONAREAS[id].text}
-                    onChange={(v) => setRegions((a) => ({ ...a, [id]: v }))}
-                  />
-                ))}
-              </Entry>
-            </AccordionItemPanel>
-          </AccordionItem>
-          <AccordionItem>
-            <AccordionItemHeading>
-              <AccordionItemButton>Maxillary Spaces</AccordionItemButton>
-            </AccordionItemHeading>
-            <AccordionItemPanel>
-              <Entry>
-                {MAXILLARY.map((id) => (
-                  <Checkbox
-                    key={id}
-                    checked={regions[id]}
-                    label={REGIONAREAS[id].text}
-                    onChange={(v) => setRegions((a) => ({ ...a, [id]: v }))}
-                  />
-                ))}
-              </Entry>
-            </AccordionItemPanel>
-          </AccordionItem>
+          <Pane gap={16} display="flex" flexDirection="column">
+            <Entry>
+              <AccordionItem>
+                <AccordionItemHeading>
+                  <AccordionItemButton>
+                    <Pane display="flex" alignItems="center">
+                      <Pane flex={1} marginLeft={8}>
+                        <Text fontWeight="bold" marginX={2}>
+                          Mandibular Spaces
+                        </Text>
+                      </Pane>
+                      <Pane marginRight={16}>
+                        <AccordionItemState>
+                          {({ expanded }) =>
+                            expanded ? <FiChevronUp /> : <FiChevronDown />
+                          }
+                        </AccordionItemState>
+                      </Pane>
+                    </Pane>
+                  </AccordionItemButton>
+                </AccordionItemHeading>
+                <AccordionItemPanel>
+                  <Entry>
+                    {MANDIBULAR.map((id) => (
+                      <Checkbox
+                        key={id}
+                        checked={regions[id]}
+                        label={REGIONAREAS[id].text}
+                        onChange={(v) => setRegions((a) => ({ ...a, [id]: v }))}
+                      />
+                    ))}
+                  </Entry>
+                </AccordionItemPanel>
+              </AccordionItem>
+            </Entry>
+
+            <Entry>
+              <AccordionItem>
+                <AccordionItemHeading>
+                  <AccordionItemButton>
+                    <Pane display="flex" alignItems="center">
+                      <Pane flex={1} marginLeft={8}>
+                        <Text fontWeight="bold" marginX={2}>
+                          Maxillary Spaces
+                        </Text>
+                      </Pane>
+                      <Pane marginRight={16}>
+                        <AccordionItemState>
+                          {({ expanded }) =>
+                            expanded ? <FiChevronUp /> : <FiChevronDown />
+                          }
+                        </AccordionItemState>
+                      </Pane>
+                    </Pane>
+                  </AccordionItemButton>
+                </AccordionItemHeading>
+                <AccordionItemPanel>
+                  <Entry>
+                    {MAXILLARY.map((id) => (
+                      <Checkbox
+                        key={id}
+                        checked={regions[id]}
+                        label={REGIONAREAS[id].text}
+                        onChange={(v) => setRegions((a) => ({ ...a, [id]: v }))}
+                      />
+                    ))}
+                  </Entry>
+                </AccordionItemPanel>
+              </AccordionItem>
+            </Entry>
+          </Pane>
         </Accordion>
       </Pane>
 
