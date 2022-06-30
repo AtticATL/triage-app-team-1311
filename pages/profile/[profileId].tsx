@@ -90,17 +90,13 @@ function ViewProfilePage({ handle }: { handle: Handle }) {
     );
   }
 
-  const patientTriages = CHECKLIST.filter(function (id) {
-    return profile.triageChecklist[id];
-  });
-
-  const patientMaxillaryRegions = MAXILLARY.filter(function (id) {
-    return profile.infectionRegions[id];
-  });
-
-  const patientMandibularRegions = MANDIBULAR.filter(function (id) {
-    return profile.infectionRegions[id];
-  });
+  const patientTriages = CHECKLIST.filter((id) => profile.triageChecklist[id]);
+  const patientMaxillaryRegions = MAXILLARY.filter(
+    (id) => profile.infectionRegions[id]
+  );
+  const patientMandibularRegions = MANDIBULAR.filter(
+    (id) => profile.infectionRegions[id]
+  );
 
   return (
     <>
