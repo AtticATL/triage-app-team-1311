@@ -114,7 +114,7 @@ describe("patient history", () => {
 describe("triage checklist", () => {
   it("accepts valid data", () => {
     Profile.TriageChecklist.parse({
-      test: false,
+      tbd: false,
     });
   });
 
@@ -177,8 +177,8 @@ describe("patient profile", () => {
         currentInfectionHistory: "current history",
         otherNotes: "other stuff",
       },
-      triageChecklist: { test: false },
-      infectionRegions: { test: false },
+      triageChecklist: { tbd: false },
+      infectionRegions: { TheDangerSpace: false },
       attachments: [
         {
           role: "Other",

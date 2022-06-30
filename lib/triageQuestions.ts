@@ -13,7 +13,6 @@ export type Question = z.infer<typeof Question>;
  * List of triage questions that we ask about the patient.
  */
 export const QUESTIONS = Object.freeze({
-  test: { text: "Example triage question" },
   difficultyBreathing: { text: "The patient has difficulty breathing" },
   difficultySwallowing: { text: "The patient has difficulty swallowing" },
   tbd: { text: "(remainder of the checklist data TBD)" },
@@ -22,11 +21,9 @@ export const QUESTIONS = Object.freeze({
 /**
  * Set of question IDs representing every triage question.
  */
-export const CHECKLIST: Array<keyof typeof QUESTIONS> = [
-  "difficultySwallowing",
-  "difficultyBreathing",
-  "tbd",
-];
+export const CHECKLIST: Array<keyof typeof QUESTIONS> = Object.keys(
+  QUESTIONS
+) as Array<keyof typeof QUESTIONS>;
 
 /**
  * A default-false answer record for every question in QUESTION_KEYS

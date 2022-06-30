@@ -24,14 +24,6 @@ import {
   ParagraphField,
   Entry,
 } from "../components/Form";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionItemHeading,
-  AccordionItemButton,
-  AccordionItemPanel,
-  AccordionItemState,
-} from "react-accessible-accordion";
 import Checkbox from "../components/Checkbox";
 import {
   FiAlertTriangle,
@@ -215,7 +207,7 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
         <DateField field={dob} label="Date of Birth" />
       </Pane>
 
-      <Pane display="flex" flexDirection="column" gap={16}>
+      <Pane gap={16} display="flex" flexDirection="column">
         <Heading size={600}>History</Heading>
         <Text>
           The {"patient's"} medical history, as well as the history of the
@@ -240,13 +232,12 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
           help="Any other important information"
         />
       </Pane>
-      <Pane gap={4}>
+      <Pane gap={16} display="flex" flexDirection="column">
         <Heading>Triage Checklist</Heading>
         <Text>
           Answers to these questions can help determine the severity of this
           {" patient's "} case.
         </Text>
-
         <Entry>
           {CHECKLIST.map((id) => (
             <Checkbox
@@ -259,96 +250,57 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
         </Entry>
       </Pane>
 
-      <Pane gap={4} display="flex" flexDirection="column">
+      <Pane gap={16} display="flex" flexDirection="column">
         <Heading>Infection Regions</Heading>
         <Text>
           Designate the affected regions of the face for the {" patient's "}
           odontogenic injury.
         </Text>
-        <Pane gap={16} display="flex" flexDirection="column"></Pane>
-        <Accordion allowZeroExpanded={true} allowMultipleExpanded={true}>
-          <Pane gap={16} display="flex" flexDirection="column">
+        <Pane gap={16} display="flex" flexDirection="column">
+          <Entry>
+            <Pane flex={1} marginLeft={8}>
+              <Text fontWeight="bold" marginX={2}>
+                Mandibular Spaces
+              </Text>
+            </Pane>
             <Entry>
-              <AccordionItem>
-                <AccordionItemHeading>
-                  <AccordionItemButton>
-                    <Pane display="flex" alignItems="center">
-                      <Pane flex={1} marginLeft={8}>
-                        <Text fontWeight="bold" marginX={2}>
-                          Mandibular Spaces
-                        </Text>
-                      </Pane>
-                      <Pane marginRight={16}>
-                        <AccordionItemState>
-                          {({ expanded }) =>
-                            expanded ? <FiChevronUp /> : <FiChevronDown />
-                          }
-                        </AccordionItemState>
-                      </Pane>
-                    </Pane>
-                  </AccordionItemButton>
-                </AccordionItemHeading>
-                <AccordionItemPanel>
-                  <Entry>
-                    {MANDIBULAR.map((id) => (
-                      <Checkbox
-                        key={id}
-                        checked={regions[id]}
-                        label={REGIONAREAS[id].text}
-                        onChange={(v) => setRegions((a) => ({ ...a, [id]: v }))}
-                      />
-                    ))}
-                  </Entry>
-                </AccordionItemPanel>
-              </AccordionItem>
+              {MANDIBULAR.map((id) => (
+                <Checkbox
+                  key={id}
+                  checked={regions[id]}
+                  label={REGIONAREAS[id].text}
+                  onChange={(v) => setRegions((a) => ({ ...a, [id]: v }))}
+                />
+              ))}
             </Entry>
+          </Entry>
 
+          <Entry>
+            <Pane flex={1} marginLeft={8}>
+              <Text fontWeight="bold" marginX={2}>
+                Maxillary Spaces
+              </Text>
+            </Pane>
             <Entry>
-              <AccordionItem>
-                <AccordionItemHeading>
-                  <AccordionItemButton>
-                    <Pane display="flex" alignItems="center">
-                      <Pane flex={1} marginLeft={8}>
-                        <Text fontWeight="bold" marginX={2}>
-                          Maxillary Spaces
-                        </Text>
-                      </Pane>
-                      <Pane marginRight={16}>
-                        <AccordionItemState>
-                          {({ expanded }) =>
-                            expanded ? <FiChevronUp /> : <FiChevronDown />
-                          }
-                        </AccordionItemState>
-                      </Pane>
-                    </Pane>
-                  </AccordionItemButton>
-                </AccordionItemHeading>
-                <AccordionItemPanel>
-                  <Entry>
-                    {MAXILLARY.map((id) => (
-                      <Checkbox
-                        key={id}
-                        checked={regions[id]}
-                        label={REGIONAREAS[id].text}
-                        onChange={(v) => setRegions((a) => ({ ...a, [id]: v }))}
-                      />
-                    ))}
-                  </Entry>
-                </AccordionItemPanel>
-              </AccordionItem>
+              {MAXILLARY.map((id) => (
+                <Checkbox
+                  key={id}
+                  checked={regions[id]}
+                  label={REGIONAREAS[id].text}
+                  onChange={(v) => setRegions((a) => ({ ...a, [id]: v }))}
+                />
+              ))}
             </Entry>
-          </Pane>
-        </Accordion>
+          </Entry>
+        </Pane>
       </Pane>
 
       <Pane gap={16} display="flex" flexDirection="column">
-        <Pane>
-          <Heading>Imaging and Attachments</Heading>
-          <Text>
-            Upload photos of CT scans or any other relevant imagery. Quality is
-            not very important here: photos of your computer screen are okay.
-          </Text>
-        </Pane>
+        <Heading>Imaging and Attachments</Heading>
+        <Text>
+          Upload photos of CT scans or any other relevant imagery. Quality is
+          not very important here: photos of your computer screen are okay.
+        </Text>
 
         {uploads.map(({ attachment, earlyHandle }) => (
           <Entry key={attachment.blob.id}>
