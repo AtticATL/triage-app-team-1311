@@ -2,7 +2,7 @@ import * as React from "react";
 import { useState, useRef, useCallback, useMemo } from "react";
 import { ZodType, z, ZodIssue, ZodEnum, ZodNumber } from "zod";
 import { FiAlertCircle } from "react-icons/fi";
-import { Text, Pane, Button } from "evergreen-ui";
+import { Text, Pane, Button, TagInput } from "evergreen-ui";
 import { danger, muted } from "../colors";
 import Input from "./Input";
 import Textarea from "./Textarea";
@@ -72,6 +72,31 @@ export function TextField<Z extends ZodType<string | undefined>>({
           issues.map((issue, i) => <Error key={i}>{issue.message}</Error>)}
         {help && <HelpText>{help}</HelpText>}
       </Label>
+    </Entry>
+  );
+}
+
+export function TagField<Z extends ZodType<string[] | undefined>>({
+  field,
+  label,
+  help,
+  autocompleteItems = [],
+  ...rest
+}: FieldProps<Z> & { autocompleteItems?: string[] }) {
+  return (
+    <Entry>
+      <Label label={label} />
+      <TagInput
+        width="100%"
+        values={field.value}
+        tagSubmitKey="enter"
+        onChange={field.setValue}
+        tagProps={{ fontSize: 14, paddingY: 12 }}
+        inputProps={{ style: { fontSize: 14 } }}
+        autocompleteItems={autocompleteItems}
+        addOnBlur={true}
+      />
+      {help && <HelpText>{help}</HelpText>}
     </Entry>
   );
 }

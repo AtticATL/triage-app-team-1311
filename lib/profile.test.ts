@@ -95,17 +95,17 @@ describe("patient identity", () => {
 describe("patient history", () => {
   it("accepts valid data", () => {
     Profile.PatientHistory.parse({
-      pastHistory: "some detail",
       currentInfectionHistory: "some detail",
-      otherNotes: "some detail",
+      comorbidities: ["something"],
+      medications: ["something else"],
     });
   });
   it("rejects invalid data", () => {
     expect(() => {
       Profile.PatientHistory.parse({
-        // missing pastHistory
+        // missing medications
         currentInfectionHistory: "some detail",
-        otherNodes: "some detail",
+        comorbidities: ["something"],
       });
     }).toThrow();
   });
@@ -173,9 +173,9 @@ describe("patient profile", () => {
         sex: "Female",
       },
       patientHistory: {
-        pastHistory: "past history",
         currentInfectionHistory: "current history",
-        otherNotes: "other stuff",
+        comorbidities: ["Diabetes"],
+        medications: ["Something"],
       },
       triageChecklist: { tbd: false },
       infectionRegions: { TheDangerSpace: false },
@@ -191,6 +191,8 @@ describe("patient profile", () => {
           blob: exampleHandle,
         },
       ],
+      notes: "some extra notes",
+      hfhfhfhfhfh: "some extra notes",
     });
   });
   it("rejects invalid data", () => {});

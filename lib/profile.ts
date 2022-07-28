@@ -55,12 +55,24 @@ export const Paragraph = z
 export type Paragraph = z.infer<typeof Paragraph>;
 
 /**
+ * Information on the patient's current medications
+ */
+export const MedicationList = z.array(z.string());
+export type MedicationList = z.infer<typeof MedicationList>;
+
+/**
+ * Information on the patient's comorbidities
+ */
+export const ComorbidityList = z.array(z.string());
+export type ComorbidityList = z.infer<typeof ComorbidityList>;
+
+/**
  * Information on the patient's medical history
  */
 export const PatientHistory = z.object({
   currentInfectionHistory: Paragraph,
-  pastHistory: Paragraph,
-  otherNotes: z.string().optional(),
+  medications: MedicationList,
+  comorbidities: ComorbidityList,
 });
 export type PatientHistory = z.infer<typeof PatientHistory>;
 
@@ -125,5 +137,6 @@ export const Profile = z.object({
   triageChecklist: TriageChecklist,
   infectionRegions: InfectionRegions,
   attachments: z.array(Attachment),
+  notes: z.string().optional(),
 });
 export type Profile = z.infer<typeof Profile>;

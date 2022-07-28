@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as Profile from "../lib/profile";
+import { MEDICATION_LIST } from "../lib/medications";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CHECKLIST,
@@ -23,6 +24,7 @@ import {
   DateField,
   ParagraphField,
   Entry,
+  TagField,
 } from "../components/Form";
 import Checkbox from "../components/Checkbox";
 import {
@@ -45,6 +47,7 @@ import {
   Spinner,
   Text,
   toaster,
+  TagInput,
 } from "evergreen-ui";
 import { UploadCapturePhoto, UploadCaptureVideo, UploadFile } from "./Upload";
 
@@ -67,14 +70,15 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
     Profile.Paragraph,
     initial?.patientHistory?.currentInfectionHistory
   );
-  const pastHistory = useField(
-    Profile.Paragraph,
-    initial?.patientHistory?.pastHistory
+  const medications = useField(
+    z.optional(Profile.MedicationList),
+    initial?.patientHistory?.medications
   );
-  const otherNotes = useField(
-    z.optional(Profile.Paragraph),
-    initial?.patientHistory?.otherNotes
+  const comorbidities = useField(
+    z.optional(Profile.ComorbidityList),
+    initial?.patientHistory?.comorbidities
   );
+  const notes = useField(z.string().optional(), initial?.notes);
 
   // Track the true/false answers to triage questions
   let [answers, setAnswers] = useState<Record<string, boolean>>(
@@ -163,10 +167,11 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
       infectionRegions: regions,
       patientHistory: {
         currentInfectionHistory: currentInfectionHistory.value,
-        pastHistory: pastHistory.value,
-        otherNotes: otherNotes.value,
+        medications: medications.value,
+        comorbidities: comorbidities.value,
       },
       attachments: uploads.map((u) => u.attachment),
+      notes: notes.value,
     };
 
     return Profile.Profile.safeParse(draftProfile);
@@ -175,8 +180,9 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
     dob.value,
     sex.value,
     currentInfectionHistory.value,
-    pastHistory.value,
-    otherNotes.value,
+    medications.value,
+    comorbidities.value,
+    notes.value,
     answers,
     regions,
     uploads,
@@ -220,16 +226,17 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
           help="The history of the current infection"
         />
 
-        <ParagraphField
-          field={pastHistory}
-          label="Past History"
-          help="The past medical history of the patient"
+        <TagField
+          field={medications}
+          label="Medications"
+          help="The medications the patient takes"
+          autocompleteItems={MEDICATION_LIST}
         />
 
-        <ParagraphField
-          field={otherNotes}
-          label="Other Notes"
-          help="Any other important information"
+        <TagField
+          field={comorbidities}
+          label="Comorbidities"
+          help="Other conditions the patient is experiencing"
         />
       </Pane>
       <Pane gap={16} display="flex" flexDirection="column">
@@ -326,6 +333,14 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
           <UploadCaptureVideo onUpload={(f) => attach(f)} />
           <UploadFile onUpload={(f) => attach(f)} />
         </Pane>
+      </Pane>
+
+      <Pane gap={16} display="flex" flexDirection="column">
+        <Heading>Anything else?</Heading>
+        <Text>
+          Include any other relevant information about the patient here.
+        </Text>
+        <ParagraphField field={notes} label="Other Notes" />
       </Pane>
 
       <Pane marginTop={8} gap={16}>

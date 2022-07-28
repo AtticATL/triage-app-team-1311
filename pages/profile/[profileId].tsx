@@ -21,6 +21,8 @@ import {
   Position,
   TextInput,
   toaster,
+  UnorderedList,
+  ListItem,
 } from "evergreen-ui";
 import BlobMedia from "../../components/BlobMedia";
 import Checkbox from "../../components/Checkbox";
@@ -65,6 +67,26 @@ function ViewProfileRoute() {
       />
     );
   }
+}
+
+function TextList({
+  items,
+  emptyText = "None",
+}: {
+  items: string[];
+  emptyText: string;
+}) {
+  if (items.length == 0) {
+    return <Text color="muted">{emptyText}</Text>;
+  }
+
+  return (
+    <UnorderedList marginY={0}>
+      {items.map((item, idx) => (
+        <ListItem key={idx}>{item}</ListItem>
+      ))}
+    </UnorderedList>
+  );
 }
 
 function ViewProfilePage({ handle }: { handle: Handle }) {
@@ -135,19 +157,42 @@ function ViewProfilePage({ handle }: { handle: Handle }) {
               </Button>
             </Pane>
           </Card>
-          <Card elevation={0} backgroundColor="white" padding={16}>
-            <Heading>History of Current Infection</Heading>
-            <Paragraph>
-              {profile.patientHistory.currentInfectionHistory}
-            </Paragraph>
-            <Heading marginTop={16}>Past History</Heading>
-            <Paragraph>{profile.patientHistory.pastHistory}</Paragraph>
-            <Heading marginTop={16}>Other Notes</Heading>
-            <Paragraph>
-              {profile.patientHistory.otherNotes || (
-                <Text color="muted">No other notes were provided.</Text>
-              )}
-            </Paragraph>
+          <Card
+            elevation={0}
+            backgroundColor="white"
+            padding={16}
+            gap={16}
+            display="flex"
+            flexDirection="column"
+          >
+            <div>
+              <Heading>History of Current Infection</Heading>
+              <Paragraph>
+                {profile.patientHistory.currentInfectionHistory}
+              </Paragraph>
+            </div>
+            <div>
+              <Heading>Medications</Heading>
+              <TextList
+                items={profile.patientHistory.medications}
+                emptyText="No medications given"
+              />
+            </div>
+            <div>
+              <Heading>Comorbidities</Heading>
+              <TextList
+                items={profile.patientHistory.comorbidities}
+                emptyText="No comorbidities given"
+              />
+            </div>
+            <div>
+              <Heading>Other Notes</Heading>
+              <Paragraph>
+                {profile.notes || (
+                  <Text color="muted">No other notes were provided.</Text>
+                )}
+              </Paragraph>
+            </div>
           </Card>
           <Card
             elevation={0}
@@ -159,20 +204,20 @@ function ViewProfilePage({ handle }: { handle: Handle }) {
           >
             <Pane>
               <Heading>Triage Checklist</Heading>
-              <Entry>
-                {patientTriages.length ? (
-                  patientTriages.map((id) => (
+              {patientTriages.length ? (
+                <Entry>
+                  {patientTriages.map((id) => (
                     <Checkbox
                       key={id}
                       checked={profile.triageChecklist[id]}
                       label={QUESTIONS[id].text}
                       onChange={(v) => null}
                     />
-                  ))
-                ) : (
-                  <Text>No items selected.</Text>
-                )}
-              </Entry>
+                  ))}
+                </Entry>
+              ) : (
+                <Text>No items selected.</Text>
+              )}
             </Pane>
           </Card>
           <Card
@@ -185,36 +230,22 @@ function ViewProfilePage({ handle }: { handle: Handle }) {
           >
             <Pane>
               <Heading>Infection Regions</Heading>
-              <Heading marginTop={20}>Mandibular</Heading>
-              <Entry>
-                {patientMandibularRegions.length ? (
-                  patientMandibularRegions.map((id) => (
-                    <Checkbox
-                      key={id}
-                      checked={profile.infectionRegions[id]}
-                      label={REGIONAREAS[id].text}
-                      onChange={(v) => null}
-                    />
-                  ))
-                ) : (
-                  <Text>No regions selected.</Text>
+              <Heading size={400} marginTop={20}>
+                Mandibular
+              </Heading>
+              <TextList
+                items={patientMandibularRegions.map(
+                  (id) => REGIONAREAS[id].text
                 )}
-              </Entry>
-              <Heading>Maxillary</Heading>
-              <Entry>
-                {patientMaxillaryRegions.length ? (
-                  patientMaxillaryRegions.map((id) => (
-                    <Checkbox
-                      key={id}
-                      checked={profile.infectionRegions[id]}
-                      label={REGIONAREAS[id].text}
-                      onChange={(v) => null}
-                    />
-                  ))
-                ) : (
-                  <Text>No regions selected.</Text>
+                emptyText="No mandibular regions given"
+              />
+              <Heading size={400}>Maxillary</Heading>
+              <TextList
+                items={patientMaxillaryRegions.map(
+                  (id) => REGIONAREAS[id].text
                 )}
-              </Entry>
+                emptyText="No mandibular regions given"
+              />
             </Pane>
           </Card>
           <Card
