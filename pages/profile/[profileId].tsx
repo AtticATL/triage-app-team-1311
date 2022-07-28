@@ -77,7 +77,13 @@ function TextList({
   emptyText: string;
 }) {
   if (items.length == 0) {
-    return <Text color="muted">{emptyText}</Text>;
+    return (
+      <Pane marginY={8} marginLeft="1em">
+        <Text fontStyle="italic" color="muted">
+          {emptyText}
+        </Text>
+      </Pane>
+    );
   }
 
   return (
@@ -175,14 +181,14 @@ function ViewProfilePage({ handle }: { handle: Handle }) {
               <Heading>Medications</Heading>
               <TextList
                 items={profile.patientHistory.medications}
-                emptyText="No medications given"
+                emptyText="No medications given."
               />
             </div>
             <div>
               <Heading>Comorbidities</Heading>
               <TextList
                 items={profile.patientHistory.comorbidities}
-                emptyText="No comorbidities given"
+                emptyText="No comorbidities given."
               />
             </div>
             <div>
