@@ -229,14 +229,14 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
         <TagField
           field={medications}
           label="Medications"
-          help="The medications the patient takes"
+          help="The medications the patient takes (comma-separated)"
           autocompleteItems={MEDICATION_LIST}
         />
 
         <TagField
           field={comorbidities}
           label="Comorbidities"
-          help="Other conditions the patient is experiencing"
+          help="Other conditions the patient is experiencing (comma-separated)"
         />
       </Pane>
       <Pane gap={16} display="flex" flexDirection="column">

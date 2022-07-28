@@ -88,11 +88,21 @@ export function TagField<Z extends ZodType<string[] | undefined>>({
       <Label label={label} />
       <TagInput
         width="100%"
-        values={field.value}
+        values={field.value || []}
+        separator=","
         tagSubmitKey="enter"
         onChange={field.setValue}
-        tagProps={{ fontSize: 14, paddingY: 12 }}
-        inputProps={{ style: { fontSize: 14 } }}
+        height={100}
+        tagProps={{ fontSize: 14, height: 20, margin: 4 }}
+        inputProps={{
+          style: {
+            height: 20,
+            fontSize: 14,
+            margin: 4,
+            paddingLeft: 4,
+            paddingRight: 4,
+          },
+        }}
         autocompleteItems={autocompleteItems}
         addOnBlur={true}
       />
