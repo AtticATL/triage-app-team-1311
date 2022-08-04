@@ -62,7 +62,7 @@ export function TextField<Z extends ZodType<string | undefined>>({
           onBlur={() => {
             setDirty(true);
 
-            // Remove whitespace around, and null out of empty.
+            // Remove whitespace around, and null out if empty.
             let trimmed = field.value && field.value.trim();
             let nulled = trimmed || undefined;
             field.setValue(nulled);
@@ -139,7 +139,7 @@ export function DateField<Z extends ZodType<string | undefined>>({
           onBlur={() => {
             setDirty(true);
 
-            // Remove whitespace around, and null out of empty.
+            // Remove whitespace around, and null out if empty.
             let trimmed = field.value && field.value.trim();
             let nulled = trimmed || undefined;
             field.setValue(nulled);
@@ -151,6 +151,7 @@ export function DateField<Z extends ZodType<string | undefined>>({
         <style jsx>{`
           input {
             font-family: inherit;
+            width: 100%;
           }
         `}</style>
       </Label>
@@ -263,7 +264,7 @@ export function ParagraphField<Z extends ZodType<string | undefined>>({
           onBlur={() => {
             setDirty(true);
 
-            // Remove whitespace around, and null out of empty.
+            // Remove whitespace around, and null out if empty.
             let trimmed = field.value && field.value.trim();
             let nulled = trimmed || undefined;
             field.setValue(nulled);

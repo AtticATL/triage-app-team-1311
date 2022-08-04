@@ -72,11 +72,11 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
   );
   const medications = useField(
     z.optional(Profile.MedicationList),
-    initial?.patientHistory?.medications
+    initial?.patientHistory?.medications ?? []
   );
   const comorbidities = useField(
     z.optional(Profile.ComorbidityList),
-    initial?.patientHistory?.comorbidities
+    initial?.patientHistory?.comorbidities ?? []
   );
   const notes = useField(z.string().optional(), initial?.notes);
 
@@ -266,9 +266,9 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
         <Pane gap={16} display="flex" flexDirection="column">
           <Entry>
             <Pane flex={1} marginLeft={8}>
-              <Text fontWeight="bold" marginX={2}>
+              <Heading size={400} marginX={2}>
                 Mandibular Spaces
-              </Text>
+              </Heading>
             </Pane>
             <Entry>
               {MANDIBULAR.map((id) => (
@@ -280,13 +280,10 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
                 />
               ))}
             </Entry>
-          </Entry>
-
-          <Entry>
             <Pane flex={1} marginLeft={8}>
-              <Text fontWeight="bold" marginX={2}>
+              <Heading size={400} marginX={2}>
                 Maxillary Spaces
-              </Text>
+              </Heading>
             </Pane>
             <Entry>
               {MAXILLARY.map((id) => (

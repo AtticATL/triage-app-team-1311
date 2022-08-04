@@ -13,13 +13,24 @@ export type Question = z.infer<typeof Question>;
  * List of triage questions that we ask about the patient.
  */
 export const QUESTIONS = Object.freeze({
-  difficultyBreathing: { text: "The patient has difficulty breathing" },
-  difficultySwallowing: { text: "The patient has difficulty swallowing" },
-  tbd: { text: "(remainder of the checklist data TBD)" },
+  inabilityToLaySupine: { text: "Inability to lay in supine position" },
+  obliterationOfInferiorBorderOfMandible: {
+    text: "Obliteration of the inferior border of the mandible",
+  },
+  fullnessInFloorOfMouth: { text: "Fullness in floor of mouth" },
+  tongueProtrusion: { text: "Tongue protrusion" },
+  drooling: { text: "Drooling" },
+  trismus: { text: "Trismus" },
+  respiratoryObstruction: { text: "Signs of respiratory obstruction" },
+  dysphonia: { text: "Dysphonia" },
+  dysphagia: { text: "Dysphagia" },
+  muffledOrHoarse: { text: "Muffled voice, or hoarseness of voice" },
+  neckSwelling: { text: "Neck swelling" },
+  deviationInUvula: { text: "Deviation in uvula" },
 } as const);
 
 /**
- * Set of question IDs representing every triage question.
+ * Set of question IDs representing every triage question to show the user.
  */
 export const CHECKLIST: Array<keyof typeof QUESTIONS> = Object.keys(
   QUESTIONS
