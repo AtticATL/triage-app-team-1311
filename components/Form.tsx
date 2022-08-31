@@ -2,7 +2,7 @@ import * as React from "react";
 import { useState, useRef, useCallback, useMemo } from "react";
 import { ZodType, z, ZodIssue, ZodEnum, ZodNumber } from "zod";
 import { FiAlertCircle } from "react-icons/fi";
-import { Text, Pane, Button } from "evergreen-ui";
+import { Text, Pane, Button, TagInput } from "evergreen-ui";
 import { danger, muted } from "../colors";
 import Input from "./Input";
 import Textarea from "./Textarea";
@@ -62,7 +62,7 @@ export function TextField<Z extends ZodType<string | undefined>>({
           onBlur={() => {
             setDirty(true);
 
-            // Remove whitespace around, and null out of empty.
+            // Remove whitespace around, and null out if empty.
             let trimmed = field.value && field.value.trim();
             let nulled = trimmed || undefined;
             field.setValue(nulled);
@@ -72,6 +72,41 @@ export function TextField<Z extends ZodType<string | undefined>>({
           issues.map((issue, i) => <Error key={i}>{issue.message}</Error>)}
         {help && <HelpText>{help}</HelpText>}
       </Label>
+    </Entry>
+  );
+}
+
+export function TagField<Z extends ZodType<string[] | undefined>>({
+  field,
+  label,
+  help,
+  autocompleteItems = [],
+  ...rest
+}: FieldProps<Z> & { autocompleteItems?: string[] }) {
+  return (
+    <Entry>
+      <Label label={label} />
+      <TagInput
+        width="100%"
+        values={field.value || []}
+        separator=","
+        tagSubmitKey="enter"
+        onChange={field.setValue}
+        height={100}
+        tagProps={{ fontSize: 14, height: 20, margin: 4 }}
+        inputProps={{
+          style: {
+            height: 20,
+            fontSize: 14,
+            margin: 4,
+            paddingLeft: 4,
+            paddingRight: 4,
+          },
+        }}
+        autocompleteItems={autocompleteItems}
+        addOnBlur={true}
+      />
+      {help && <HelpText>{help}</HelpText>}
     </Entry>
   );
 }
@@ -104,7 +139,7 @@ export function DateField<Z extends ZodType<string | undefined>>({
           onBlur={() => {
             setDirty(true);
 
-            // Remove whitespace around, and null out of empty.
+            // Remove whitespace around, and null out if empty.
             let trimmed = field.value && field.value.trim();
             let nulled = trimmed || undefined;
             field.setValue(nulled);
@@ -116,6 +151,7 @@ export function DateField<Z extends ZodType<string | undefined>>({
         <style jsx>{`
           input {
             font-family: inherit;
+            width: 100%;
           }
         `}</style>
       </Label>
@@ -228,7 +264,7 @@ export function ParagraphField<Z extends ZodType<string | undefined>>({
           onBlur={() => {
             setDirty(true);
 
-            // Remove whitespace around, and null out of empty.
+            // Remove whitespace around, and null out if empty.
             let trimmed = field.value && field.value.trim();
             let nulled = trimmed || undefined;
             field.setValue(nulled);

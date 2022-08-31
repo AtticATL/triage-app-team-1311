@@ -8,3 +8,4 @@ out
 
 # Sentry
 .sentryclirc
+profile-schema.json

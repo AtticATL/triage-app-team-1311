@@ -11,28 +11,28 @@ export type Section = z.infer<typeof Section>;
  * List of different regions
  */
 export const REGIONAREAS = Object.freeze({
-  // Mandibular Spaces
+  // Mandibular
   test: { text: "Test injury region" },
   VestibularAbscess: { text: "Vestibular Abscess" },
-  SubmandibularSpace: { text: "Submandibular Space" },
-  SublingualSpace: { text: "Sublingual Space" },
-  SubmentalSpace: { text: "Submental Space" },
-  MedialMasticatorSpace: { text: "Medial Masticator Space" },
-  LateralMasticatorSpace: { text: "Lateral Masticator Space" },
-  LateralPharyngealSpace: { text: "Lateral Pharyngeal Space" },
-  RetropharyngealSpace: { text: "Retropharyngeal Space" },
+  Submandibular: { text: "Submandibular" },
+  Sublingual: { text: "Sublingual" },
+  Submental: { text: "Submental" },
+  MedialMasticator: { text: "Medial Masticator" },
+  LateralMasticator: { text: "Lateral Masticator" },
+  LateralPharyngeal: { text: "Lateral Pharyngeal" },
+  Retropharyngeal: { text: "Retropharyngeal" },
   CarotidSheath: { text: "Carotid Sheath" },
-  PretrachealSpace: { text: "Pretracheal Space" },
-  VisceralSpace: { text: "Visceral Space" },
+  Pretracheal: { text: "Pretracheal" },
+  Visceral: { text: "Visceral" },
   TheDangerSpace: { text: "The Danger Space" },
-  // Maxillary Spaces
-  VestibularSpace: { text: "Vestibular Space" },
-  CanineSpace: { text: "Canine Space" },
-  InfraorbitalSpace: { text: "Infraorbital Space" },
-  PalatalSpace: { text: "Palatal Space" },
-  OrbitalSpace: { text: "Orbital Space" },
-  TemporalSpace: { text: "Temporal Space" },
-  InfratemporalSpace: { text: "Infratemporal Space" },
+  // Maxillary
+  Vestibular: { text: "Vestibular" },
+  Canine: { text: "Canine" },
+  Infraorbital: { text: "Infraorbital" },
+  Palatal: { text: "Palatal" },
+  Orbital: { text: "Orbital" },
+  Temporal: { text: "Temporal" },
+  Infratemporal: { text: "Infratemporal" },
 } as const);
 
 /**
@@ -40,16 +40,16 @@ export const REGIONAREAS = Object.freeze({
  */
 export const MANDIBULAR: Array<keyof typeof REGIONAREAS> = [
   "VestibularAbscess",
-  "SubmandibularSpace",
-  "SublingualSpace",
-  "SubmentalSpace",
-  "MedialMasticatorSpace",
-  "LateralMasticatorSpace",
-  "LateralPharyngealSpace",
-  "RetropharyngealSpace",
+  "Submandibular",
+  "Sublingual",
+  "Submental",
+  "MedialMasticator",
+  "LateralMasticator",
+  "LateralPharyngeal",
+  "Retropharyngeal",
   "CarotidSheath",
-  "PretrachealSpace",
-  "VisceralSpace",
+  "Pretracheal",
+  "Visceral",
   "TheDangerSpace",
 ];
 
@@ -57,39 +57,21 @@ export const MANDIBULAR: Array<keyof typeof REGIONAREAS> = [
  * Set of IDs representing maxillary regions.
  */
 export const MAXILLARY: Array<keyof typeof REGIONAREAS> = [
-  "VestibularSpace",
-  "CanineSpace",
-  "InfraorbitalSpace",
-  "PalatalSpace",
-  "OrbitalSpace",
-  "TemporalSpace",
-  "InfratemporalSpace",
+  "Vestibular",
+  "Canine",
+  "Infraorbital",
+  "Palatal",
+  "Orbital",
+  "Temporal",
+  "Infratemporal",
 ];
 
 /**
  * Set of IDs representing all of the avalible regions.
  */
-export const ALLREGIONS: Array<keyof typeof REGIONAREAS> = [
-  "VestibularAbscess",
-  "SubmandibularSpace",
-  "SublingualSpace",
-  "SubmentalSpace",
-  "MedialMasticatorSpace",
-  "LateralMasticatorSpace",
-  "LateralPharyngealSpace",
-  "RetropharyngealSpace",
-  "CarotidSheath",
-  "PretrachealSpace",
-  "VisceralSpace",
-  "TheDangerSpace",
-  "VestibularSpace",
-  "CanineSpace",
-  "InfraorbitalSpace",
-  "PalatalSpace",
-  "OrbitalSpace",
-  "TemporalSpace",
-  "InfratemporalSpace",
-];
+export const ALLREGIONS: Array<keyof typeof REGIONAREAS> = Object.keys(
+  REGIONAREAS
+) as Array<keyof typeof REGIONAREAS>;
 
 /**
  * A default-false record for every region

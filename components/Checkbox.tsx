@@ -1,4 +1,5 @@
 import { emoryBlue } from "../colors";
+import { Text } from "evergreen-ui";
 
 export interface CheckboxProps {
   label: string;
@@ -14,16 +15,18 @@ export default function Checkbox({ checked, onChange, label }: CheckboxProps) {
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
       />
-      <span>{label}</span>
+      <Text>{label}</Text>
 
       <style jsx>{`
         label {
+          user-select: none;
+          cursor: pointer;
           display: flex;
           flex-direction: row;
           align-items: center;
-          height: 2em;
           line-height: 2em;
           gap: 0.5em;
+          margin-bottom: 0.5em;
           accent-color: ${emoryBlue};
         }
 

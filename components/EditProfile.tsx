@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as Profile from "../lib/profile";
+import { MEDICATION_LIST } from "../lib/medications";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CHECKLIST,
@@ -23,15 +24,8 @@ import {
   DateField,
   ParagraphField,
   Entry,
+  TagField,
 } from "../components/Form";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionItemHeading,
-  AccordionItemButton,
-  AccordionItemPanel,
-  AccordionItemState,
-} from "react-accessible-accordion";
 import Checkbox from "../components/Checkbox";
 import {
   FiAlertTriangle,
@@ -53,6 +47,7 @@ import {
   Spinner,
   Text,
   toaster,
+  TagInput,
 } from "evergreen-ui";
 import { UploadCapturePhoto, UploadCaptureVideo, UploadFile } from "./Upload";
 
@@ -75,14 +70,15 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
     Profile.Paragraph,
     initial?.patientHistory?.currentInfectionHistory
   );
-  const pastHistory = useField(
-    Profile.Paragraph,
-    initial?.patientHistory?.pastHistory
+  const medications = useField(
+    z.optional(Profile.MedicationList),
+    initial?.patientHistory?.medications ?? []
   );
-  const otherNotes = useField(
-    z.optional(Profile.Paragraph),
-    initial?.patientHistory?.otherNotes
+  const comorbidities = useField(
+    z.optional(Profile.ComorbidityList),
+    initial?.patientHistory?.comorbidities ?? []
   );
+  const notes = useField(z.string().optional(), initial?.notes);
 
   // Track the true/false answers to triage questions
   let [answers, setAnswers] = useState<Record<string, boolean>>(
@@ -171,10 +167,11 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
       infectionRegions: regions,
       patientHistory: {
         currentInfectionHistory: currentInfectionHistory.value,
-        pastHistory: pastHistory.value,
-        otherNotes: otherNotes.value,
+        medications: medications.value,
+        comorbidities: comorbidities.value,
       },
       attachments: uploads.map((u) => u.attachment),
+      notes: notes.value,
     };
 
     return Profile.Profile.safeParse(draftProfile);
@@ -183,8 +180,9 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
     dob.value,
     sex.value,
     currentInfectionHistory.value,
-    pastHistory.value,
-    otherNotes.value,
+    medications.value,
+    comorbidities.value,
+    notes.value,
     answers,
     regions,
     uploads,
@@ -215,7 +213,7 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
         <DateField field={dob} label="Date of Birth" />
       </Pane>
 
-      <Pane display="flex" flexDirection="column" gap={16}>
+      <Pane gap={16} display="flex" flexDirection="column">
         <Heading size={600}>History</Heading>
         <Text>
           The {"patient's"} medical history, as well as the history of the
@@ -228,25 +226,25 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
           help="The history of the current infection"
         />
 
-        <ParagraphField
-          field={pastHistory}
-          label="Past History"
-          help="The past medical history of the patient"
+        <TagField
+          field={medications}
+          label="Medications"
+          help="The medications the patient takes (comma-separated)"
+          autocompleteItems={MEDICATION_LIST}
         />
 
-        <ParagraphField
-          field={otherNotes}
-          label="Other Notes"
-          help="Any other important information"
+        <TagField
+          field={comorbidities}
+          label="Comorbidities"
+          help="Other conditions the patient is experiencing (comma-separated)"
         />
       </Pane>
-      <Pane gap={4}>
+      <Pane gap={16} display="flex" flexDirection="column">
         <Heading>Triage Checklist</Heading>
         <Text>
           Answers to these questions can help determine the severity of this
           {" patient's "} case.
         </Text>
-
         <Entry>
           {CHECKLIST.map((id) => (
             <Checkbox
@@ -259,96 +257,54 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
         </Entry>
       </Pane>
 
-      <Pane gap={4} display="flex" flexDirection="column">
+      <Pane gap={16} display="flex" flexDirection="column">
         <Heading>Infection Regions</Heading>
         <Text>
           Designate the affected regions of the face for the {" patient's "}
           odontogenic injury.
         </Text>
-        <Pane gap={16} display="flex" flexDirection="column"></Pane>
-        <Accordion allowZeroExpanded={true} allowMultipleExpanded={true}>
-          <Pane gap={16} display="flex" flexDirection="column">
+        <Pane gap={16} display="flex" flexDirection="column">
+          <Entry>
+            <Pane flex={1} marginLeft={8}>
+              <Heading size={400} marginX={2}>
+                Mandibular Spaces
+              </Heading>
+            </Pane>
             <Entry>
-              <AccordionItem>
-                <AccordionItemHeading>
-                  <AccordionItemButton>
-                    <Pane display="flex" alignItems="center">
-                      <Pane flex={1} marginLeft={8}>
-                        <Text fontWeight="bold" marginX={2}>
-                          Mandibular Spaces
-                        </Text>
-                      </Pane>
-                      <Pane marginRight={16}>
-                        <AccordionItemState>
-                          {({ expanded }) =>
-                            expanded ? <FiChevronUp /> : <FiChevronDown />
-                          }
-                        </AccordionItemState>
-                      </Pane>
-                    </Pane>
-                  </AccordionItemButton>
-                </AccordionItemHeading>
-                <AccordionItemPanel>
-                  <Entry>
-                    {MANDIBULAR.map((id) => (
-                      <Checkbox
-                        key={id}
-                        checked={regions[id]}
-                        label={REGIONAREAS[id].text}
-                        onChange={(v) => setRegions((a) => ({ ...a, [id]: v }))}
-                      />
-                    ))}
-                  </Entry>
-                </AccordionItemPanel>
-              </AccordionItem>
+              {MANDIBULAR.map((id) => (
+                <Checkbox
+                  key={id}
+                  checked={regions[id]}
+                  label={REGIONAREAS[id].text}
+                  onChange={(v) => setRegions((a) => ({ ...a, [id]: v }))}
+                />
+              ))}
             </Entry>
-
+            <Pane flex={1} marginLeft={8}>
+              <Heading size={400} marginX={2}>
+                Maxillary Spaces
+              </Heading>
+            </Pane>
             <Entry>
-              <AccordionItem>
-                <AccordionItemHeading>
-                  <AccordionItemButton>
-                    <Pane display="flex" alignItems="center">
-                      <Pane flex={1} marginLeft={8}>
-                        <Text fontWeight="bold" marginX={2}>
-                          Maxillary Spaces
-                        </Text>
-                      </Pane>
-                      <Pane marginRight={16}>
-                        <AccordionItemState>
-                          {({ expanded }) =>
-                            expanded ? <FiChevronUp /> : <FiChevronDown />
-                          }
-                        </AccordionItemState>
-                      </Pane>
-                    </Pane>
-                  </AccordionItemButton>
-                </AccordionItemHeading>
-                <AccordionItemPanel>
-                  <Entry>
-                    {MAXILLARY.map((id) => (
-                      <Checkbox
-                        key={id}
-                        checked={regions[id]}
-                        label={REGIONAREAS[id].text}
-                        onChange={(v) => setRegions((a) => ({ ...a, [id]: v }))}
-                      />
-                    ))}
-                  </Entry>
-                </AccordionItemPanel>
-              </AccordionItem>
+              {MAXILLARY.map((id) => (
+                <Checkbox
+                  key={id}
+                  checked={regions[id]}
+                  label={REGIONAREAS[id].text}
+                  onChange={(v) => setRegions((a) => ({ ...a, [id]: v }))}
+                />
+              ))}
             </Entry>
-          </Pane>
-        </Accordion>
+          </Entry>
+        </Pane>
       </Pane>
 
       <Pane gap={16} display="flex" flexDirection="column">
-        <Pane>
-          <Heading>Imaging and Attachments</Heading>
-          <Text>
-            Upload photos of CT scans or any other relevant imagery. Quality is
-            not very important here: photos of your computer screen are okay.
-          </Text>
-        </Pane>
+        <Heading>Imaging and Attachments</Heading>
+        <Text>
+          Upload photos of CT scans or any other relevant imagery. Quality is
+          not very important here: photos of your computer screen are okay.
+        </Text>
 
         {uploads.map(({ attachment, earlyHandle }) => (
           <Entry key={attachment.blob.id}>
@@ -374,6 +330,14 @@ export default function EditProfile({ initial, onChange }: EditProfileProps) {
           <UploadCaptureVideo onUpload={(f) => attach(f)} />
           <UploadFile onUpload={(f) => attach(f)} />
         </Pane>
+      </Pane>
+
+      <Pane gap={16} display="flex" flexDirection="column">
+        <Heading>Anything else?</Heading>
+        <Text>
+          Include any other relevant information about the patient here.
+        </Text>
+        <ParagraphField field={notes} label="Other Notes" />
       </Pane>
 
       <Pane marginTop={8} gap={16}>
