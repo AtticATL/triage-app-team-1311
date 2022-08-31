@@ -1,5 +1,11 @@
 # TransferApp
 
+<p float="left">
+  <img width="309.75" alt="Screenshot of application home page" src="screenshots/splash_example.png">
+  <img width="309.75" alt="Screenshot of application's view profile page" src="screenshots/view_example.png">
+  <img width="309.75" alt="Screenshot of application's create profile page" src="screenshots/create_example.png">
+</p>
+
 Webapp to help transfer patients with odontogenic infections.
 
 ## Running the app locally
